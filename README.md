@@ -1,3 +1,4 @@
+![输入图片说明](examples/Snipaste_2025-01-02_20-49-00.png)
 ### 基础用法
 ```vue
 <script setup lang="ts">
