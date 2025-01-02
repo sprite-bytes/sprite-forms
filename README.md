@@ -1,5 +1,5 @@
 ### 基础用法
-```vue
+```javascript
 <script setup lang="ts">
 import {reactive, ref} from "vue";
 import SpriteForms from "../packages/SpriteForms";
