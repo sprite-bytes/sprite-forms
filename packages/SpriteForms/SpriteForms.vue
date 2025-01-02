@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import {type FormConfig, FormItem} from "./type";
+import {type FormConfig, FormItem, type FormItems} from "./type";
 
 defineProps<{
-  config: FormConfig,
+  config?: FormConfig,
+  formItems: FormItems
   model: any
 }>()
 defineOptions({
@@ -12,9 +13,9 @@ defineOptions({
 </script>
 
 <template>
-  <el-form :model="model" v-bind="config.attribute?.form">
-    <el-row v-bind="config.attribute?.layout">
-      <template v-for="item in config.formItems" :key="item.prop">
+  <el-form :model="model" v-bind="config?.formAttribute">
+    <el-row v-bind="config?.layout">
+      <template v-for="item in formItems" :key="item.prop">
         <el-col v-if="FormItem.RADIO == item.type" v-bind="item.attribute?.col">
           <el-form-item
               :label="item.label"
