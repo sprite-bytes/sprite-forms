@@ -25,10 +25,12 @@ export interface FormItemAttribute {
 }
 
 export interface FormItems {
-    type: FormItem // 表单类型
     prop: string // 字段名
+    slot?: string // 表单插槽
+    type?: FormItem // 表单类型
     label?: string // 字段描述
     attribute?: FormItemAttribute // 字段其他属性
+    customSlot?: string
 }
 
 export interface FormConfig {

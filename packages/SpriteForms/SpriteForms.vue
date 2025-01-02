@@ -3,7 +3,7 @@ import {type FormConfig, FormItem, type FormItems} from "./type";
 
 defineProps<{
   config?: FormConfig,
-  formItems: FormItems
+  formItems: FormItems[]
   model: any
 }>()
 defineOptions({
@@ -125,6 +125,14 @@ defineOptions({
           <el-form-item :label="item.label" :prop="item.prop" v-bind="item.attribute?.formItem">
             <el-color-picker v-model="model[item.prop]" v-bind="item.attribute?.com"></el-color-picker>
           </el-form-item>
+        </el-col>
+        <el-col v-if="item.slot">
+          <el-form-item :label="item.label" :prop="item.prop" v-bind="item.attribute?.formItem">
+            <slot :name="item.slot" :scope="{item, config, value: model[item.prop]}"></slot>
+          </el-form-item>
+        </el-col>
+        <el-col v-if="item.customSlot">
+          <slot :name="item.slot" :scope="{item, config, value: model[item.prop]}"></slot>
         </el-col>
       </template>
     </el-row>
