@@ -154,6 +154,15 @@ const formItems = ref<FormItems[]>([
     label: '喜欢的颜色',
     prop: 'color',
   },
+  {
+    prop: 'post',
+    label: '岗位',
+    slot: 'postSlot',
+  },
+  {
+    prop: 'mobile',
+    customSlot: 'mobileSlot',
+  }
 ])
 
 const modelModel = reactive({
@@ -168,7 +177,14 @@ const modelModel = reactive({
         :model="modelModel"
         :config="formConfig"
         :form-items="formItems"
-    />
+    >
+      <template #postSlot="{scope : {item}}">
+        <div>{{ item }}</div>
+      </template>
+      <template #mobileSlot>
+        <div>手机号</div>
+      </template>
+    </SpriteForms>
   </div>
 </template>
 

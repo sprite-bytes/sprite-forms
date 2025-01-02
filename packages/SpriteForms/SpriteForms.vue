@@ -132,7 +132,7 @@ defineOptions({
           </el-form-item>
         </el-col>
         <el-col v-if="item.customSlot">
-          <slot :name="item.slot" :scope="{item, config, value: model[item.prop]}"></slot>
+          <slot :name="item.customSlot" :scope="{item, config, value: model[item.prop]}"></slot>
         </el-col>
       </template>
     </el-row>
