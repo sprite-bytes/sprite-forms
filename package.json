@@ -1,0 +1,50 @@
+{
+  "name": "sprite-forms",
+  "author": {
+    "name": "Fangliang",
+    "email": "fl9420@qq.com"
+  },
+  "private": false,
+  "version": "1.0.2",
+  "type": "module",
+  "license": "MIT",
+  "description": "A form component based on Vue 3 and Element Plus.",
+  "keywords": [
+    "sprite-forms",
+    "form component",
+    "form config",
+    "form",
+    "vue"
+  ],
+  "main": "dist/sprite-forms.umd.js",
+  "module": "dist/sprite-forms.es.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "import": "./dist/sprite-forms.es.js",
+      "require": "./dist/sprite-forms.umd.js"
+    }
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc -b && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@types/node": "^22.10.2",
+    "element-plus": "^2.9.1",
+    "lodash": "^4.17.21",
+    "vue": "^3.5.13"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.2.1",
+    "@vue/tsconfig": "^0.7.0",
+    "typescript": "~5.6.2",
+    "vite": "^6.0.5",
+    "vite-plugin-dts": "^4.4.0",
+    "vue-tsc": "^2.2.0"
+  }
+}
