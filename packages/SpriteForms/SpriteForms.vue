@@ -1,15 +1,15 @@
 <script setup lang="ts">
 import {type FormConfig, FormItem, type FormItems} from "./type";
 
-defineProps<{
-  config?: FormConfig,
-  formItems: FormItems[]
-  model: any
-}>()
 defineOptions({
   name: 'SpriteForms',
 })
 
+defineProps<{
+  config?: FormConfig,
+  formItems: FormItems[]
+  model: Record<string, any>
+}>()
 </script>
 
 <template>

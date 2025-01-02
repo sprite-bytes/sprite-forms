@@ -5,15 +5,16 @@
     "email": "fl9420@qq.com"
   },
   "private": false,
-  "version": "1.0.2",
+  "version": "1.0.0",
   "type": "module",
   "license": "MIT",
-  "description": "A form component based on Vue 3 and Element Plus.",
+  "description": "A form & table component based on Vue 3 and Element Plus.",
   "keywords": [
     "sprite-forms",
     "form component",
     "form config",
     "form",
+    "table",
     "vue"
   ],
   "main": "dist/sprite-forms.umd.js",

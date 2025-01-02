@@ -1,11 +1,6 @@
-![输入图片说明](lib/images/form-preview.png)
-### 基础用法
-```vue
 <script setup lang="ts">
 import {reactive, ref} from "vue";
-import SpriteForms from "../packages/SpriteForms";
-import {FormConfig, FormItem, FormItems} from "../packages/SpriteForms/type";
-
+import {FormConfig, FormItems, FormItem} from "../../../packages/SpriteForms/type";
 const formConfig = reactive<FormConfig>({
   layout: {
     gutter: 10
@@ -157,9 +152,18 @@ const formItems = ref<FormItems[]>([
     label: '喜欢的颜色',
     prop: 'color',
   },
+  {
+    prop: 'post',
+    label: '岗位',
+    slot: 'postSlot',
+  },
+  {
+    prop: 'mobile',
+    customSlot: 'mobileSlot',
+  }
 ])
 
-const modelModel = reactive({
+const modelModel = reactive<Record<string, any>>({
   name: '格子惊蛰版',
   willingness: 10
 })
@@ -167,11 +171,19 @@ const modelModel = reactive({
 
 <template>
   <div class="examples-container">
+    dd
     <SpriteForms
         :model="modelModel"
         :config="formConfig"
         :form-items="formItems"
-    />
+    >
+      <template #postSlot="{scope : {item}}">
+        <div>{{ item }}</div>
+      </template>
+      <template #mobileSlot>
+        <div>手机号</div>
+      </template>
+    </SpriteForms>
   </div>
 </template>
 
@@ -181,4 +193,3 @@ const modelModel = reactive({
   margin: auto;
 }
 </style>
-```

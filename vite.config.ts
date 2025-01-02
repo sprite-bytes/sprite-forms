@@ -16,9 +16,7 @@ export default defineConfig({
             include: ['packages/**/*.d.ts', 'packages/**/*.vue', 'packages/**/*.ts'],
         })
     ],
-    resolve: {
-        alias: {}
-    },
+    resolve: {},
     build: {
         rollupOptions: {
             external: ['vue'],
