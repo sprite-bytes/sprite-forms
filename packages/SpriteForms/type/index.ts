@@ -1,4 +1,3 @@
-/**表单类型枚举*/
 export enum FormItem {
     RADIO = 'Radio', // 单选框
     CHECKBOX = 'Checkbox', // 多选框
@@ -15,15 +14,27 @@ export enum FormItem {
     COLOR_PICKER = 'ColorPicker', // 颜色选择器
 }
 
+export interface FormItemAttribute {
+    options?: Record<string, any> // 下拉选择、单选、多选的配置列表
+    col?: Record<string, any> // 布局属性
+    formItem?: Record<string, any> // 表单属性
+    com?: Record<string, any> // 表单实例组件属性
+    comItem?: Record<string, any>
+}
+
 export interface formItems {
-    type: FormItem
-    prop: string
-    label?: string
-    attribute?: Record<string, any>
-    options?: Record<string, any>
+    type: FormItem // 表单类型
+    prop: string // 字段名
+    label?: string // 字段描述
+    attribute?: FormItemAttribute // 字段其他属性
+}
+
+interface FormConfigAttribute {
+    layout?: Record<string, any>
+    form?: Record<string, any>
 }
 
 export interface FormConfig {
     formItems: formItems[]
-    attribute?: Record<string, any>
+    attribute?: FormConfigAttribute
 }
