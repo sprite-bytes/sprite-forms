@@ -23,6 +23,16 @@ const getComponent = (component?: FormComponentType | string) => {
 };
 
 const getRules = (item: FormItemConfig) => {
+  if (Array.isArray(item?.rules)) {
+    return item?.rules
+  }
+  if (item.required) {
+    return [{
+      required: true,
+      message: `${item.label || item.name}必填`,
+      trigger: 'change',
+    }]
+  }
   return item?.rules || []
 }
 

@@ -36,6 +36,7 @@ export interface FormItemConfig {
     name: string // 字段名
     label?: string // 字段描述
     component?: FormComponentType | string // 表单项类型
+    required?: boolean, // 是否必填
     rules?: any,
     readonly?: boolean | ((formData?: Record<string, any>) => boolean)
     visible?: boolean | ((formData?: Record<string, any>) => boolean)

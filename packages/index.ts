@@ -1,1 +1,1 @@
-export * from './SpriteForms'
+export * from './sprite-forms'

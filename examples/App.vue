@@ -36,6 +36,7 @@ const formItems = ref<FormItemConfig[]>([
     component: FormComponentType.CHECKBOX,
     label: '爱好',
     name: 'hobby',
+    required: true,
     options: [
       {
         value: 1,
@@ -73,6 +74,7 @@ const formItems = ref<FormItemConfig[]>([
     label: '政治面貌',
     name: 'politicalOutlook',
     labelKey: 'name',
+    required: true,
     valueKey: 'value',
     options: [
       {

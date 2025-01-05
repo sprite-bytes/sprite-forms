@@ -28,7 +28,7 @@ export default defineConfig({
         },
         lib: {
             entry: path.resolve(__dirname, './packages/index.ts'),
-            name: 'SpriteForms',
+            name: 'sprite-forms',
             fileName: (format) => `sprite-forms.${format}.js`
         }
     },

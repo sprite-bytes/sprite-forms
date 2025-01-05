@@ -3,7 +3,7 @@
 ```vue
 <script setup lang="ts">
   import {reactive, ref} from "vue";
-  import {FormComponentType, FormConfig, FormItemConfig} from "../../../packages/SpriteForms/types";
+  import {FormComponentType, FormConfig, FormItemConfig} from "../../../packages/sprite-forms/types";
 
   const formConfig = reactive<FormConfig>({
     layout: {
