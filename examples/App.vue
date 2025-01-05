@@ -181,11 +181,39 @@ const submitForm = () => {
     console.log(error)
   })
 }
+
+const columns = ref([
+  {
+    name: 'name',
+    label: '姓名',
+  },
+  {
+    name: 'age',
+    label: '年龄'
+  },
+  {
+    name: 'gender',
+    label: '性别',
+    format: () => {
+      return '男'
+    }
+  }
+])
+
+const data = ref([
+  {name: '格子', age: 18, gender: '1'},
+  {name: '格子大暑版本', age: 20, gender: '0'}
+])
+
+const config = ref({
+  border: true,
+})
 </script>
 
 <template>
   <div class="examples-container">
     <SpriteForms
+        v-if="false"
         ref="spriteFormsRef"
         :model="formState"
         :config="formConfig"
@@ -197,8 +225,9 @@ const submitForm = () => {
       <template #mobileSlot>
         <div>手机号</div>
       </template>
+      <el-button @click="submitForm">提交</el-button>
     </SpriteForms>
-    <el-button @click="submitForm">提交</el-button>
+    <SpriteTable :config="config" :columns="columns" :data="data"/>
   </div>
 </template>
 
