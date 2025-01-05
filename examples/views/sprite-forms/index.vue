@@ -167,12 +167,17 @@ const formItems = ref<FormItemConfig[]>([
 
 const formState = reactive<Record<string, any>>({
   name: '格子惊蛰版',
-  willingness: 10
+  willingness: 10,
+  age: 23
 })
 
 const spriteFormsRef = ref()
 const submitForm = () => {
-  spriteFormsRef.value.validateForm()
+  spriteFormsRef.value.validateForm().then(() => {
+    console.log('通过')
+  }).catch((error) => {
+    console.log(error)
+  })
 }
 </script>
 

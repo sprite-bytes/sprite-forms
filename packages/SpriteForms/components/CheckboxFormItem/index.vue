@@ -8,12 +8,13 @@ interface Props {
   labelKey?: string,
   valueKey?: string,
   options?: Record<string, any>[] | ((formData: Record<string, any>) => Record<string, any>[]),
-  model: Array<string | number | boolean>
+  model?: Array<string | number | boolean>
 }
 
 const props = withDefaults(defineProps<Props>(), {
   labelKey: 'label',
   valueKey: 'value',
+  model: () => []
 })
 
 const emit = defineEmits(['update:model']);

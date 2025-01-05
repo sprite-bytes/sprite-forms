@@ -22,10 +22,14 @@ const getComponent = (component?: FormComponentType | string) => {
   return component;
 };
 
+const getRules = (item: FormItemConfig) => {
+  return item?.rules || []
+}
+
 const getComponentProps = (item: FormItemConfig) => {
   const props: any = {
-    // 忽略 disabled、readonly 属性，避免冲突
-    ...omit(item, 'disabled', 'readonly'),
+    // 忽略 disabled、readonly、options 属性，避免冲突
+    ...omit(item, 'disabled', 'readonly', 'options'),
     ...item.attribute?.component
   };
   return props;
@@ -44,7 +48,7 @@ const isDisabled = (item: FormItemConfig, formData: Record<string, any>) => {
   if (typeof item.disabled === 'function') {
     return item.disabled(formData);
   }
-  return item.disabled;
+  return !!item.disabled;
 };
 
 // 判断表单项是否只读
@@ -52,7 +56,7 @@ const isReadonly = (item: FormItemConfig, formData: Record<string, any>) => {
   if (typeof item.readonly === 'function') {
     return item.readonly(formData);
   }
-  return item.readonly;
+  return !!item.readonly;
 };
 
 // 获取下拉选择的选项数据，根据数据源类型进行处理
@@ -70,7 +74,7 @@ const validateForm = () => {
   return new Promise((resolve, reject) => {
     formRef.value?.validate((valid: boolean, errorMessage: {
       field: string,
-      fieldValue: unknown,
+      fieldValue: never,
       message: string
     }[]) => {
       if (valid) {
@@ -97,7 +101,7 @@ defineExpose({
             <el-form-item
                 :label="item.label"
                 :prop="item.name"
-                :rules="item?.rules"
+                :rules="getRules(item)"
                 v-bind="item?.attribute?.formItem"
             >
               <slot v-if="item.slot" :name="item.slot" :scope="{item, value: props.model[item.name]}"/>
