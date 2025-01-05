@@ -4,19 +4,27 @@ defineOptions({
   name: 'RadioFormItem'
 })
 
-const props = defineProps<{
+interface Props {
+  labelKey?: string,
+  valueKey?: string,
   options?: Record<string, any>[] | ((formData: Record<string, any>) => Record<string, any>[]),
-  value: any
-}>()
+  model: string | number | boolean
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  labelKey: 'label',
+  valueKey: 'value',
+})
 
 </script>
 
 <template>
-  <el-radio-group v-model="props.value">
+  <el-radio-group v-model="props.model">
     <el-radio
         v-for="item in props.options"
-        :label="item.label"
-        :value="item.value"
+        :key="item[valueKey]"
+        :label="item[labelKey]"
+        :value="item[valueKey]"
     >
     </el-radio>
   </el-radio-group>

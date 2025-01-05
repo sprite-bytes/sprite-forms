@@ -4,16 +4,25 @@ defineOptions({
   name: 'CheckboxFormItem'
 })
 
-const props = defineProps<{
+interface Props {
+  labelKey?: string,
+  valueKey?: string,
   options?: Record<string, any>[] | ((formData: Record<string, any>) => Record<string, any>[]),
   model: Array<string | number | boolean>
-}>()
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  labelKey: 'label',
+  valueKey: 'value',
+})
 
 const emit = defineEmits(['update:model']);
 
 const handleChange = (value: Array<string | number | boolean>) => {
   emit('update:model', value)
 }
+
+
 </script>
 
 <template>
@@ -23,8 +32,9 @@ const handleChange = (value: Array<string | number | boolean>) => {
   >
     <el-checkbox
         v-for="item in props.options"
-        :label="item.label"
-        :value="item.value"
+        :key="item[valueKey]"
+        :label="item[labelKey]"
+        :value="item[valueKey]"
     >
     </el-checkbox>
   </el-checkbox-group>

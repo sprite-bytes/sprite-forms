@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import {isUndefined} from "lodash";
+import {ref} from 'vue';
+import {isUndefined, omit} from "lodash";
 
 defineOptions({
   name: 'SpriteForms',
@@ -12,8 +13,7 @@ const props = defineProps<{
   model: Record<string, any>
 }>()
 
-// 根据组件类型返回对应的 Element Plus 组件名
-const getComponent = (component?: FormComponentType) => {
+const getComponent = (component?: FormComponentType | string) => {
   for (let item of formComponentTypeList) {
     if (item === component) {
       return `el-${component}`;
@@ -22,12 +22,12 @@ const getComponent = (component?: FormComponentType) => {
   return component;
 };
 
-// 获取组件额外的属性绑定，如验证规则等
 const getComponentProps = (item: FormItemConfig) => {
-  const props: any = {};
-  if (item.rules) {
-    props.rules = item.rules;
-  }
+  const props: any = {
+    // 忽略 disabled、readonly 属性，避免冲突
+    ...omit(item, 'disabled', 'readonly'),
+    ...item.attribute?.component
+  };
   return props;
 };
 
@@ -64,29 +64,57 @@ const getOptions = (item: FormItemConfig) => {
   }
   return [];
 };
+
+const formRef = ref()
+const validateForm = () => {
+  return new Promise((resolve, reject) => {
+    formRef.value?.validate((valid: boolean, errorMessage: {
+      field: string,
+      fieldValue: unknown,
+      message: string
+    }[]) => {
+      if (valid) {
+        resolve(props.model)
+      } else {
+        reject(errorMessage)
+      }
+    });
+  })
+}
+
+defineExpose({
+  validateForm,
+})
 </script>
 
 <template>
-  <el-form :model="model" v-bind="config?.formAttribute">
+  <el-form :model="model" ref="formRef" :rules="config?.rules" v-bind="config?.attribute">
     <el-row v-bind="config?.layout">
-      <template v-for="item in formItems" :key="item.prop">
-        <el-col v-bind="item.attribute?.col">
-          <el-form-item
-              :label="item.label"
-              :prop="item.prop"
-              v-if="isVisible(item, props.model)"
-          >
-            <component
-                :disabled="isDisabled(item, props.model)"
-                :readonly="isReadonly(item, props.model)"
-                :is="getComponent(item.component)"
-                v-model="props.model[item.prop]"
-                :options="getOptions(item)"
-                v-bind="getComponentProps(item)"
-            />
-          </el-form-item>
-        </el-col>
+      <template v-for="item in formItems" :key="item.name">
+        <template v-if="isVisible(item, props.model)">
+          <slot v-if="item?.customSlot" :name="item.customSlot"></slot>
+          <el-col v-else v-bind="item?.column">
+            <el-form-item
+                :label="item.label"
+                :prop="item.name"
+                :rules="item?.rules"
+                v-bind="item?.attribute?.formItem"
+            >
+              <slot v-if="item.slot" :name="item.slot" :scope="{item, value: props.model[item.name]}"/>
+              <component
+                  v-else
+                  :disabled="isDisabled(item, props.model)"
+                  :readonly="isReadonly(item, props.model)"
+                  :is="getComponent(item.component)"
+                  v-model="props.model[item.name]"
+                  :options="getOptions(item)"
+                  v-bind="getComponentProps(item)"
+              />
+            </el-form-item>
+          </el-col>
+        </template>
       </template>
     </el-row>
+    <slot></slot>
   </el-form>
 </template>

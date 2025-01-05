@@ -4,19 +4,27 @@ defineOptions({
   name: 'SelectFormItem'
 })
 
-const props = defineProps<{
+interface Props {
+  labelKey?: string,
+  valueKey?: string,
   options?: Record<string, any>[] | ((formData: Record<string, any>) => Record<string, any>[]),
-  value: any
-}>()
+  model: string | number | boolean
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  labelKey: 'label',
+  valueKey: 'value',
+})
 
 </script>
 
 <template>
-  <el-select v-model="props.value">
+  <el-select v-model="props.model">
     <el-option
         v-for="item in props.options"
-        :label="item.label"
-        :value="item.value"
+        :key="item[valueKey]"
+        :label="item[labelKey]"
+        :value="item[valueKey]"
     >
     </el-option>
   </el-select>

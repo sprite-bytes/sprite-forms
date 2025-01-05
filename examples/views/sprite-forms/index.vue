@@ -3,10 +3,15 @@ import {reactive, ref} from "vue";
 import {FormComponentType, FormConfig, FormItemConfig} from "../../../packages/SpriteForms/types";
 
 const formConfig = reactive<FormConfig>({
+  rules: {
+    gender: [
+      {required: true, trigger: 'blur'},
+    ]
+  },
   layout: {
     gutter: 10
   },
-  formAttribute: {
+  attribute: {
     labelWidth: 'auto'
   }
 })
@@ -15,7 +20,7 @@ const formItems = ref<FormItemConfig[]>([
   {
     component: FormComponentType.RADIO,
     label: '性别',
-    prop: 'gender',
+    name: 'gender',
     options: [
       {
         value: 1,
@@ -30,7 +35,7 @@ const formItems = ref<FormItemConfig[]>([
   {
     component: FormComponentType.CHECKBOX,
     label: '爱好',
-    prop: 'hobby',
+    name: 'hobby',
     options: [
       {
         value: 1,
@@ -49,39 +54,41 @@ const formItems = ref<FormItemConfig[]>([
   {
     component: FormComponentType.INPUT,
     label: '姓名',
-    prop: 'name',
-    visible(formData) {
-      return formData.age !== 1;
+    name: 'name',
+    readonly(formData) {
+      return formData.politicalOutlook !== 1;
     },
     disabled(formData) {
-      const { hobby = [] } = formData;
+      const {hobby = []} = formData;
       return hobby.includes(1)
     },
   },
   {
     component: FormComponentType.INPUT_NUMBER,
     label: '年龄',
-    prop: 'age',
+    name: 'age',
   },
   {
     component: FormComponentType.SELECT,
     label: '政治面貌',
-    prop: 'politicalOutlook',
+    name: 'politicalOutlook',
+    labelKey: 'name',
+    valueKey: 'value',
     options: [
       {
         value: 1,
-        label: '党员',
+        name: '党员',
       },
       {
         value: 2,
-        label: '团员',
+        name: '团员',
       }
     ],
   },
   {
     component: FormComponentType.CASCADER,
     label: '地址',
-    prop: 'address',
+    name: 'address',
     options: [
       {
         value: '001',
@@ -120,54 +127,60 @@ const formItems = ref<FormItemConfig[]>([
   {
     component: FormComponentType.SWITCH,
     label: '是否通过',
-    prop: 'whetherPass',
+    name: 'whetherPass',
   },
   {
     component: FormComponentType.SLIDER,
     label: '意愿度',
-    prop: 'willingness',
+    name: 'willingness',
   },
   {
     component: FormComponentType.TIME_PICKER,
     label: '起床时间',
-    prop: 'wakeUpTime',
+    name: 'wakeUpTime',
   },
   {
     component: FormComponentType.DATE_PICKER,
     label: '出生年月',
-    prop: 'birthday',
+    name: 'birthday',
   },
   {
     component: FormComponentType.RATE,
     label: '评价',
-    prop: 'rate',
+    name: 'rate',
   },
   {
     component: FormComponentType.COLOR_PICKER,
     label: '喜欢的颜色',
-    prop: 'color',
+    name: 'color',
   },
   {
-    prop: 'post',
+    name: 'post',
     label: '岗位',
     slot: 'postSlot',
   },
   {
-    prop: 'mobile',
+    name: 'mobile',
     customSlot: 'mobileSlot',
   }
 ])
 
-const modelModel = reactive<Record<string, any>>({
+const formState = reactive<Record<string, any>>({
   name: '格子惊蛰版',
   willingness: 10
 })
+
+const spriteFormsRef = ref()
+const submitForm = () => {
+  spriteFormsRef.value.validateForm()
+}
 </script>
 
 <template>
   <div class="examples-container">
     <SpriteForms
-        :model="modelModel"
+        ref="spriteFormsRef"
+        :model="formState"
         :config="formConfig"
         :form-items="formItems"
     >
@@ -178,6 +191,7 @@ const modelModel = reactive<Record<string, any>>({
         <div>手机号</div>
       </template>
     </SpriteForms>
+    <el-button @click="submitForm">提交</el-button>
   </div>
 </template>
 
