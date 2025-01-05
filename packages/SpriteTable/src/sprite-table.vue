@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type {TableConfig, ColumnItems} from "./type";
+import type {TableConfig, ColumnItems} from "./types";
 
 defineOptions({
   name: 'SpriteTable'

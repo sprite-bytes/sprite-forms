@@ -5,7 +5,7 @@
     "email": "fl9420@qq.com"
   },
   "private": false,
-  "version": "1.0.0",
+  "version": "0.0.5",
   "type": "module",
   "license": "MIT",
   "description": "A form & table component based on Vue 3 and Element Plus.",
@@ -21,7 +21,8 @@
   "module": "dist/sprite-forms.es.js",
   "types": "dist/index.d.ts",
   "files": [
-    "dist"
+    "dist",
+    "lib"
   ],
   "exports": {
     ".": {
