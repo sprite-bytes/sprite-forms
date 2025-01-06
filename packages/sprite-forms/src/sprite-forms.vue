@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import {ref} from 'vue';
 import {isUndefined, omit} from "lodash";
+import {formComponentTypeList, type FormConfig, type FormItemConfig} from "./types";
 
 defineOptions({
   name: 'SpriteForms',
 })
-import {type FormConfig, type FormItemConfig, FormComponentType, formComponentTypeList} from "./types";
 
 const props = defineProps<{
   config?: FormConfig,
@@ -13,7 +13,8 @@ const props = defineProps<{
   model: Record<string, any>
 }>()
 
-const getComponent = (component?: FormComponentType | string) => {
+const getComponent = (data: FormItemConfig) => {
+  const component = data.component;
   for (let item of formComponentTypeList) {
     if (item === component) {
       return `el-${component}`;
@@ -40,7 +41,7 @@ const getComponentProps = (item: FormItemConfig) => {
   const props: any = {
     // 忽略 disabled、readonly、options 属性，避免冲突
     ...omit(item, 'disabled', 'readonly', 'options'),
-    ...item.attribute?.component
+    ...item.props?.component
   };
   return props;
 };
@@ -70,9 +71,9 @@ const isReadonly = (item: FormItemConfig, formData: Record<string, any>) => {
 };
 
 // 获取下拉选择的选项数据，根据数据源类型进行处理
-const getOptions = (item: FormItemConfig) => {
+const getOptions = (item: FormItemConfig,) => {
   if (typeof item.remoteOptions === 'function') {
-    return item.remoteOptions();
+    return item.remoteOptions(props.model);
   } else if (item.options) {
     return item.options;
   }
@@ -80,7 +81,7 @@ const getOptions = (item: FormItemConfig) => {
 };
 
 const formRef = ref()
-const validateForm = () => {
+const validate = () => {
   return new Promise((resolve, reject) => {
     formRef.value?.validate((valid: boolean, errorMessage: {
       field: string,
@@ -96,13 +97,35 @@ const validateForm = () => {
   })
 }
 
+const resetFields = () => {
+  formRef.value?.resetFields()
+}
+
 defineExpose({
-  validateForm,
+  validate,
+  resetFields,
+  formRef,
 })
+
+const emit = defineEmits(['change']);
+
+const formData = new Proxy(props.model, {
+  set(target, property: string, value) {
+    emit('change', {target, property, value})
+    target[property] = value;
+    return true
+  }
+})
+
+const handleChange = (data: any, item: FormItemConfig) => {
+  if (typeof item.change === 'function') {
+    item.change(data);
+  }
+}
 </script>
 
 <template>
-  <el-form :model="model" ref="formRef" :rules="config?.rules" v-bind="config?.attribute">
+  <el-form :model="formData" ref="formRef" :rules="config?.rules" v-bind="config?.props">
     <el-row v-bind="config?.layout">
       <template v-for="item in formItems" :key="item.name">
         <template v-if="isVisible(item, props.model)">
@@ -112,16 +135,17 @@ defineExpose({
                 :label="item.label"
                 :prop="item.name"
                 :rules="getRules(item)"
-                v-bind="item?.attribute?.formItem"
+                v-bind="item?.props?.formItem"
             >
               <slot v-if="item.slot" :name="item.slot" :scope="{item, value: props.model[item.name]}"/>
               <component
                   v-else
                   :disabled="isDisabled(item, props.model)"
                   :readonly="isReadonly(item, props.model)"
-                  :is="getComponent(item.component)"
-                  v-model="props.model[item.name]"
+                  :is="getComponent(item)"
+                  v-model="formData[item.name]"
                   :options="getOptions(item)"
+                  @change="(data: any) => handleChange(data, item)"
                   v-bind="getComponentProps(item)"
               />
             </el-form-item>

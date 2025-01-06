@@ -1,10 +1,8 @@
-import spriteForms from './src/sprite-forms.vue'
+import SpriteForms from './src/sprite-forms.vue'
 
-import SelectFormItem from './components/SelectFormItem/index.vue'
-import CheckboxFormItem from './components/CheckboxFormItem/index.vue'
-import RadioFormItem from './components/RadioFormItem/index.vue'
-
-export const SpriteForms = spriteForms
+import SelectFormItem from './components/select-form-item/index.vue'
+import CheckboxFormItem from './components/checkbox-form-item/index.vue'
+import RadioFormItem from './components/radio-form-item/index.vue'
 
 SpriteForms.install = function (Vue: any) {
     Vue.component(SpriteForms.name, SpriteForms)

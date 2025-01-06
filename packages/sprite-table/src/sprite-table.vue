@@ -19,7 +19,7 @@ const isFormatColumn = (item: ColumnItems) => {
 
 <template>
   <el-table :data="data" v-bind="config">
-    <template v-for="item in columns" :key="item.prop">
+    <template v-for="item in columns" :key="item.name">
       <el-table-column
           :label="item.label"
           :prop="item.name"

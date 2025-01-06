@@ -27,7 +27,7 @@ export const formComponentTypeList = [
     FormComponentType.COLOR_PICKER,
 ]
 
-export interface FormItemAttribute {
+export interface FormItemProps {
     formItem?: Record<string, any> // 表单属性
     component?: Record<string, any>
 }
@@ -48,11 +48,12 @@ export interface FormItemConfig {
     column?: Record<string, any> // 表单布局属性
     slot?: string // 表单插槽
     customSlot?: string // 自定义插槽
-    attribute?: FormItemAttribute
+    props?: FormItemProps
+    change?: (data: any) => void
 }
 
 export interface FormConfig {
     rules?: any // 表单校验
     layout?: Record<string, any> // 表单布局基于 ElRow & ElCol 组件
-    attribute?: Record<string, any> // 表单属性用于 ElForm 组件
+    props?: Record<string, any> // 表单属性用于 ElForm 组件
 }

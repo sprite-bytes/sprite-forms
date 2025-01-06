@@ -1,36 +1,34 @@
 <script setup lang="ts">
 
+import {ref} from "vue";
+
 defineOptions({
-  name: 'SelectFormItem'
+  name: 'RadioFormItem'
 })
 
 interface Props {
   labelKey?: string,
   valueKey?: string,
   options?: Record<string, any>[] | ((formData: Record<string, any>) => Record<string, any>[]),
-  model?: string | number | boolean
+  value?: string | number | boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
   labelKey: 'label',
   valueKey: 'value',
-  model: () => ''
+  value: () => ''
 })
-
+const internalModel = ref(props.value);
 </script>
 
 <template>
-  <el-select v-model="props.model">
-    <el-option
+  <el-radio-group v-model="internalModel">
+    <el-radio
         v-for="item in props.options"
         :key="item[valueKey]"
         :label="item[labelKey]"
         :value="item[valueKey]"
     >
-    </el-option>
-  </el-select>
+    </el-radio>
+  </el-radio-group>
 </template>
-
-<style scoped>
-
-</style>

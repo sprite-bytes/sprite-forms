@@ -11,9 +11,15 @@ const formConfig = reactive<FormConfig>({
   layout: {
     gutter: 10
   },
-  attribute: {
+  props: {
     labelWidth: 'auto'
   }
+})
+
+const formState = reactive<Record<string, any>>({
+  name: '格子惊蛰版',
+  willingness: 10,
+  age: 23
 })
 
 const formItems = ref<FormItemConfig[]>([
@@ -68,6 +74,10 @@ const formItems = ref<FormItemConfig[]>([
     component: FormComponentType.INPUT_NUMBER,
     label: '年龄',
     name: 'age',
+    change(data: string) {
+      formState['politicalOutlook'] = undefined
+      console.log('change', data)
+    },
   },
   {
     component: FormComponentType.SELECT,
@@ -76,16 +86,27 @@ const formItems = ref<FormItemConfig[]>([
     labelKey: 'name',
     required: true,
     valueKey: 'value',
-    options: [
-      {
-        value: 1,
-        name: '党员',
-      },
-      {
-        value: 2,
-        name: '团员',
-      }
-    ],
+    remoteOptions: (data) => {
+      return data.age == 1 ? [
+        {
+          value: 1,
+          name: '党员',
+        },
+        {
+          value: 2,
+          name: '团员',
+        }
+      ] : [
+        {
+          value: 3,
+          name: '党员1',
+        },
+        {
+          value: 4,
+          name: '团员1',
+        }
+      ]
+    }
   },
   {
     component: FormComponentType.CASCADER,
@@ -167,15 +188,9 @@ const formItems = ref<FormItemConfig[]>([
   }
 ])
 
-const formState = reactive<Record<string, any>>({
-  name: '格子惊蛰版',
-  willingness: 10,
-  age: 23
-})
-
 const spriteFormsRef = ref()
 const submitForm = () => {
-  spriteFormsRef.value.validateForm().then(() => {
+  spriteFormsRef.value.validate().then(() => {
     console.log('通过')
   }).catch((error) => {
     console.log(error)
@@ -208,16 +223,21 @@ const data = ref([
 const config = ref({
   border: true,
 })
+
+const change = (data) => {
+  console.log(data)
+}
 </script>
 
 <template>
   <div class="examples-container">
+    {{ formState }}
     <SpriteForms
-        v-if="false"
         ref="spriteFormsRef"
-        :model="formState"
         :config="formConfig"
         :form-items="formItems"
+        v-model:model="formState"
+        @change="change"
     >
       <template #postSlot="{scope : {item}}">
         <div>{{ item }}</div>
