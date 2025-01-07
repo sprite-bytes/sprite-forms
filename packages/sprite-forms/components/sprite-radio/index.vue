@@ -3,7 +3,7 @@
 import {ref} from "vue";
 
 defineOptions({
-  name: 'RadioFormItem'
+  name: 'SpriteRadio'
 })
 
 interface Props {

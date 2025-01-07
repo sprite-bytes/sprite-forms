@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {ref} from 'vue';
 import {isUndefined, omit} from "lodash";
-import {formComponentTypeList, type FormConfig, type FormItemConfig} from "./types";
+import {type FormConfig, type FormItemConfig} from "./types";
 
 defineOptions({
   name: 'SpriteForms',
@@ -12,16 +12,6 @@ const props = defineProps<{
   formItems: FormItemConfig[]
   model: Record<string, any>
 }>()
-
-const getComponent = (data: FormItemConfig) => {
-  const component = data.component;
-  for (let item of formComponentTypeList) {
-    if (item === component) {
-      return `el-${component}`;
-    }
-  }
-  return component;
-};
 
 const getRules = (item: FormItemConfig) => {
   if (Array.isArray(item?.rules)) {
@@ -38,12 +28,11 @@ const getRules = (item: FormItemConfig) => {
 }
 
 const getComponentProps = (item: FormItemConfig) => {
-  const props: any = {
+  return {
     // 忽略 disabled、readonly、options 属性，避免冲突
-    ...omit(item, 'disabled', 'readonly', 'options'),
-    ...item.props?.component
+    ...omit(item, 'disabled', 'readonly'),
+    ...item.props
   };
-  return props;
 };
 
 // 判断表单项是否可见
@@ -68,16 +57,6 @@ const isReadonly = (item: FormItemConfig, formData: Record<string, any>) => {
     return item.readonly(formData);
   }
   return !!item.readonly;
-};
-
-// 获取下拉选择的选项数据，根据数据源类型进行处理
-const getOptions = (item: FormItemConfig,) => {
-  if (typeof item.remoteOptions === 'function') {
-    return item.remoteOptions(props.model);
-  } else if (item.options) {
-    return item.options;
-  }
-  return [];
 };
 
 const formRef = ref()
@@ -125,7 +104,7 @@ const handleChange = (data: any, item: FormItemConfig) => {
 </script>
 
 <template>
-  <el-form :model="formData" ref="formRef" :rules="config?.rules" v-bind="config?.props">
+  <el-form class="sprite-forms" ref="formRef" :model="formData" :rules="config?.rules" v-bind="config?.props">
     <el-row v-bind="config?.layout">
       <template v-for="item in formItems" :key="item.name">
         <template v-if="isVisible(item, props.model)">
@@ -135,18 +114,20 @@ const handleChange = (data: any, item: FormItemConfig) => {
                 :label="item.label"
                 :prop="item.name"
                 :rules="getRules(item)"
-                v-bind="item?.props?.formItem"
+                v-bind="item?.formItemProps"
             >
+              <slot v-if="item.labelSlot" :name="item.labelSlot"/>
+              <slot v-if="item.errorSlot" :name="item.errorSlot"/>
               <slot v-if="item.slot" :name="item.slot" :scope="{item, value: props.model[item.name]}"/>
               <component
                   v-else
+                  :is="item.component"
                   :disabled="isDisabled(item, props.model)"
                   :readonly="isReadonly(item, props.model)"
-                  :is="getComponent(item)"
+                  :formState="props.model"
                   v-model="formData[item.name]"
-                  :options="getOptions(item)"
-                  @change="(data: any) => handleChange(data, item)"
                   v-bind="getComponentProps(item)"
+                  @change="(data: any) => handleChange(data, item)"
               />
             </el-form-item>
           </el-col>

@@ -3,7 +3,7 @@
 import {ref} from "vue";
 
 defineOptions({
-  name: 'CheckboxFormItem'
+  name: 'SpriteCheckbox'
 })
 
 interface Props {

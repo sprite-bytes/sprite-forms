@@ -27,36 +27,14 @@ const formItems = ref<FormItemConfig[]>([
     component: FormComponentType.RADIO,
     label: '性别',
     name: 'gender',
-    options: [
-      {
-        value: 1,
-        label: '男',
-      },
-      {
-        value: 2,
-        label: '女',
-      }
-    ],
+    options: [{value: 1, label: '男',}, {value: 2, label: '女'}],
   },
   {
     component: FormComponentType.CHECKBOX,
     label: '爱好',
     name: 'hobby',
     required: true,
-    options: [
-      {
-        value: 1,
-        label: '语文',
-      },
-      {
-        value: 2,
-        label: '数学',
-      },
-      {
-        value: 3,
-        label: '物理',
-      }
-    ],
+    options: [{value: 1, label: '语文',}, {value: 2, label: '数学',}, {value: 3, label: '物理'}],
   },
   {
     component: FormComponentType.INPUT,
@@ -75,7 +53,7 @@ const formItems = ref<FormItemConfig[]>([
     label: '年龄',
     name: 'age',
     change(data: string) {
-      formState['politicalOutlook'] = undefined
+      // formState['politicalOutlook'] = undefined
       console.log('change', data)
     },
   },
@@ -86,26 +64,13 @@ const formItems = ref<FormItemConfig[]>([
     labelKey: 'name',
     required: true,
     valueKey: 'value',
-    remoteOptions: (data) => {
-      return data.age == 1 ? [
-        {
-          value: 1,
-          name: '党员',
-        },
-        {
-          value: 2,
-          name: '团员',
-        }
-      ] : [
-        {
-          value: 3,
-          name: '党员1',
-        },
-        {
-          value: 4,
-          name: '团员1',
-        }
-      ]
+    view(formData) {
+      console.log('view', formData)
+      return formData?.age === 20
+    },
+    options: (data) => {
+      return data.age == 1 ? [{value: 1, name: '党员',}, {value: 2, name: '团员'}]
+          : [{value: 3, name: '党员1',}, {value: 4, name: '团员1',}]
     }
   },
   {
