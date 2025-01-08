@@ -40,6 +40,10 @@ const formItems = ref<FormItemConfig[]>([
     component: FormComponentType.INPUT,
     label: '姓名',
     name: 'name',
+    view: false,
+    format(data) {
+        return `${data?.hobby}你好`
+    },
     readonly(formData) {
       return formData.politicalOutlook !== 1;
     },
@@ -67,6 +71,9 @@ const formItems = ref<FormItemConfig[]>([
     view(formData) {
       console.log('view', formData)
       return formData?.age === 20
+    },
+    watchSource(formData) {
+      return formData.age
     },
     options: (data) => {
       return data.age == 1 ? [{value: 1, name: '党员',}, {value: 2, name: '团员'}]

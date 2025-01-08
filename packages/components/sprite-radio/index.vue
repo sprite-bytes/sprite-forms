@@ -1,0 +1,55 @@
+<script setup lang="ts">
+
+import {onMounted, ref} from "vue";
+import {useFormItem} from "../../../hooks/use-form-item.ts";
+
+defineOptions({
+  name: 'SpriteRadio'
+})
+
+interface Props {
+  labelKey?: string,
+  valueKey?: string,
+  options?: Record<string, any>[] | ((formData: Record<string, any>) => Record<string, any>[]),
+  value?: string | number | boolean
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  labelKey: 'label',
+  valueKey: 'value',
+  value: () => ''
+})
+const internalModel = ref(props.value);
+
+const {
+  isView,
+  viewSlot,
+  viewValue,
+  options,
+  handleChange,
+  initOptions
+} = useFormItem(props, internalModel)
+
+onMounted(() => {
+  initOptions()
+})
+</script>
+
+<template>
+  <template v-if="isView">
+    <slot v-if="viewSlot" :name="viewSlot"></slot>
+    <template v-else>{{ viewValue }}</template>
+  </template>
+  <el-radio-group
+      v-else
+      v-model="internalModel"
+  >
+    <el-radio
+        v-for="item in options"
+        :key="item[valueKey]"
+        :label="item[labelKey]"
+        :value="item[valueKey]"
+    >
+    </el-radio>
+  </el-radio-group>
+</template>

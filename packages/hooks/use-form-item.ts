@@ -1,19 +1,23 @@
-import {computed, onMounted, ref, watch} from "vue";
-import {isUndefined} from "lodash";
+import {computed, ref} from "vue";
+import {isFunction, isUndefined} from "lodash";
 
-function useFormItem<T>(props: T, model: any) {
-
+function useFormItem<T>(props: T | any, model: any) {
+    const options = ref([])
+    const isLoading = ref(false)
 
     const isView = computed(() => {
-        if (typeof props.view === 'function') {
+        if (isFunction(props.view)) {
             return props.view(props.formState)
         }
         return isUndefined(props.view) ? false : props.view
     })
 
     const viewValue = computed(() => {
+        if(isFunction(props.format)) {
+            return props.format(model.value)
+        }
         const findValue = options.value.find(((item: Record<string, any>) => item[props.valueKey] == model.value))
-        return findValue ? findValue[props.labelKey] : ''
+        return findValue ? findValue[props.labelKey] : model.value
     })
 
     const viewSlot = computed(() => {
@@ -21,24 +25,23 @@ function useFormItem<T>(props: T, model: any) {
     })
 
     const handleChange = () => {
-        if (typeof props.change === 'function') {
-            props.change(internalModel.value)
+        if (isFunction(props.change)) {
+            props.change(model.value)
         }
     }
 
-
-    const options = ref([])
-
     async function initOptions() {
+        isLoading.value = true
         let res = []
-        if (typeof props.options === 'function') {
+        if (isFunction(props.options)) {
             res = props.options(props.formState);
         } else if (props.options) {
             res = props.options;
-        } else if (props.remoteOptions === 'function') {
+        } else if (isFunction(props.remoteOptions)) {
             res = await props.remoteOptions(props.formState)
         }
         options.value = res
+        isLoading.value = false
     }
 
     return {
@@ -46,7 +49,9 @@ function useFormItem<T>(props: T, model: any) {
         viewSlot,
         viewValue,
         options,
+        isLoading,
         handleChange,
+        initOptions
     }
 }
 

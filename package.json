@@ -21,8 +21,7 @@
   "module": "dist/sprite-forms.es.js",
   "types": "dist/index.d.ts",
   "files": [
-    "dist",
-    "lib"
+    "dist"
   ],
   "exports": {
     ".": {
