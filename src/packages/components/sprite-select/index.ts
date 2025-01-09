@@ -1,9 +1,4 @@
-import type {App} from "vue"
 import SpriteSelect from './sprite-select.vue'
+import {install} from "@packages/utils/withInstall.ts"
 
-SpriteSelect.install = (app: App) => {
-    // @ts-ignore
-    app.use(SpriteSelect.name, SpriteSelect)
-}
-
-export default SpriteSelect
+export default install(SpriteSelect)

@@ -1,9 +1,4 @@
-import type {App} from "vue"
 import SpriteInput from './sprite-input.vue'
+import {install} from "@packages/utils/withInstall.ts"
 
-SpriteInput.install = (app: App) => {
-    // @ts-ignore
-    app.use(SpriteInput.name, SpriteInput)
-}
-
-export default SpriteInput
+export default install(SpriteInput)

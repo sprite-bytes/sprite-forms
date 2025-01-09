@@ -1,9 +1,4 @@
-import type {App} from "vue"
 import SpriteTable from './sprite-table.vue'
+import {install} from "@packages/utils/withInstall.ts"
 
-SpriteTable.install = (app: App) => {
-    // @ts-ignore
-    app.use(SpriteTable.name, SpriteTable)
-}
-
-export default SpriteTable
+export default install(SpriteTable)

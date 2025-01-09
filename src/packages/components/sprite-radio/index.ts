@@ -1,9 +1,4 @@
-import type {App} from "vue"
 import SpriteRadio from './sprite-radio.vue'
+import {install} from "@packages/utils/withInstall.ts"
 
-SpriteRadio.install = (app: App) => {
-    // @ts-ignore
-    app.use(SpriteRadio.name, SpriteRadio)
-}
-
-export default SpriteRadio
+export default install(SpriteRadio)

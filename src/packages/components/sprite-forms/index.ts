@@ -1,9 +1,4 @@
-import type {App} from "vue"
 import SpriteForms from './sprite-forms.vue'
+import {install} from "@packages/utils/withInstall.ts"
 
-SpriteForms.install = (app: App) => {
-    // @ts-ignore
-    app.use(SpriteForms.name, SpriteForms)
-}
-
-export default SpriteForms
+export default install(SpriteForms)

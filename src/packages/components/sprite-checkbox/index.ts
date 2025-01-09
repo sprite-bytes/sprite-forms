@@ -1,9 +1,4 @@
-import type {App} from "vue"
 import SpriteCheckbox from './sprite-checkbox.vue'
+import {install} from "@packages/utils/withInstall.ts"
 
-SpriteCheckbox.install = (app: App) => {
-    // @ts-ignore
-    app.use(SpriteCheckbox.name, SpriteCheckbox)
-}
-
-export default SpriteCheckbox
+export default install(SpriteCheckbox)
