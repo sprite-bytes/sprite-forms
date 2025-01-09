@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {ref} from 'vue';
 import {isUndefined, omit} from "lodash";
-import {type FormConfig, type FormItemConfig} from "../../types";
+import {type FormConfig, type FormItemConfig} from "@packages/types";
 
 defineOptions({name: 'SpriteForms'})
 

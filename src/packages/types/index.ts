@@ -1,7 +1,7 @@
 export enum FormComponentType {
     RADIO = 'sprite-radio', // 单选框
     CHECKBOX = 'sprite-checkbox', // 多选框
-    INPUT = 'el-input', // 输入框
+    INPUT = 'sprite-input', // 输入框
     INPUT_NUMBER = 'el-input-number', // 计数器
     SELECT = 'sprite-select', // 选择器
     CASCADER = 'el-cascader', // 级联选择器
@@ -46,7 +46,6 @@ export interface FormItemConfig {
     formChange?: (data: any) => void // 表单数据改变时触发
     format?: (data: any) => any // 仅仅 view 模式下格式化展示的文本
     emptyText?: string // view 模式下空值展示的文本
-    watchSource?: (formData?: Record<string, any>) => any
 }
 
 export interface FormItemProps extends FormItemConfig {

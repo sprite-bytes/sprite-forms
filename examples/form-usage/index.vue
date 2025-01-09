@@ -1,14 +1,10 @@
 <script setup lang="ts">
 import {reactive, ref} from "vue";
 
-import {FormComponentType, FormConfig, FormItemConfig} from "@/types";
+import {FormComponentType, type FormConfig, type FormItemConfig} from "@packages/types";
+import {ElMessage} from "element-plus";
 
 const formConfig = reactive<FormConfig>({
-  rules: {
-    gender: [
-      {required: true, trigger: 'blur'},
-    ]
-  },
   layout: {
     gutter: 10
   },
@@ -28,6 +24,7 @@ const formItems = ref<FormItemConfig[]>([
     component: FormComponentType.RADIO,
     label: '性别',
     name: 'gender',
+    required: true,
     options: [{value: 1, label: '男',}, {value: 2, label: '女'}],
   },
   {
@@ -41,14 +38,14 @@ const formItems = ref<FormItemConfig[]>([
     component: FormComponentType.INPUT,
     label: '姓名',
     name: 'name',
-    view: false,
+    view: true,
     format(data) {
       return `${data?.hobby}你好`
     },
-    readonly(formData) {
+    readonly(formData: any) {
       return formData.politicalOutlook !== 1;
     },
-    disabled(formData) {
+    disabled(formData: any) {
       const {hobby = []} = formData;
       return hobby.includes(1)
     },
@@ -73,10 +70,7 @@ const formItems = ref<FormItemConfig[]>([
       console.log('view', formData)
       return formData?.age === 20
     },
-    watchSource(formData) {
-      return formData.age
-    },
-    options: (data) => {
+    options: (data: any) => {
       return data.age == 1 ? [{value: 1, name: '党员',}, {value: 2, name: '团员'}]
           : [{value: 3, name: '党员1',}, {value: 4, name: '团员1',}]
     }
@@ -164,20 +158,19 @@ const formItems = ref<FormItemConfig[]>([
 const spriteFormsRef = ref()
 const submitForm = () => {
   spriteFormsRef.value.validate().then(() => {
-    console.log('通过')
-  }).catch((error) => {
-    console.log(error)
+    ElMessage.success('操作成功')
+  }).catch(() => {
+    ElMessage.warning('请填写必填信息')
   })
 }
 
-const change = (data) => {
+const change = (data: any) => {
   console.log(data)
 }
 </script>
 
 <template>
   <div class="examples-container">
-    {{ formState }}
     <SpriteForms
         ref="spriteFormsRef"
         :config="formConfig"
@@ -185,13 +178,9 @@ const change = (data) => {
         v-model:model="formState"
         @change="change"
     >
-      <template #postSlot="{scope : {item}}">
-        <div>{{ item }}</div>
-      </template>
-      <template #mobileSlot>
-        <div>手机号</div>
-      </template>
-      <el-button @click="submitForm">提交</el-button>
+      <div class="action">
+        <el-button size="large" type="primary" @click="submitForm">提 交</el-button>
+      </div>
     </SpriteForms>
   </div>
 </template>
@@ -199,6 +188,7 @@ const change = (data) => {
 <style scoped>
 .examples-container {
   width: 50%;
-  margin: auto;
+  padding: 20px;
+  text-align: center;
 }
 </style>
