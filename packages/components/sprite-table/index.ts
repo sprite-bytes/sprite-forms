@@ -1,13 +1,9 @@
-import spriteTable from './src/sprite-table.vue'
+import type {App} from "vue"
+import SpriteTable from './sprite-table.vue'
 
-export const SpriteTable = spriteTable
-
-SpriteTable.install = function (Vue: any) {
-    Vue.component(SpriteTable.name, SpriteTable)
+SpriteTable.install = (app: App) => {
+    // @ts-ignore
+    app.use(SpriteTable.name, SpriteTable)
 }
 
 export default SpriteTable
-
-export * from './src/sprite-table'
-
-export type {SpriteTableInstance} from './src/instance'

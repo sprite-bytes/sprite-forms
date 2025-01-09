@@ -1,11 +1,9 @@
-import spriteForms from './src/sprite-forms.vue'
+import type {App} from "vue"
+import SpriteForms from './sprite-forms.vue'
 
-import {withInstall} from "../../utils/install.ts";
-
-export const SpriteForms = withInstall(spriteForms)
+SpriteForms.install = (app: App) => {
+    // @ts-ignore
+    app.use(SpriteForms.name, SpriteForms)
+}
 
 export default SpriteForms
-
-export * from './src/sprite-forms'
-
-export type {SpriteFormsInstance} from './src/instance'

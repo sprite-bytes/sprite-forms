@@ -1,8 +1,8 @@
 <script setup lang="ts">
 
 import {ref} from "vue";
-import {useFormItem} from "../../../hooks/use-form-item.ts";
-import type {FormItemProps} from "../../src/types"
+import {useFormItem} from "../../hooks/use-form-item.ts";
+import type {FormItemProps} from "../../types"
 
 defineOptions({
   name: 'SpriteInput'

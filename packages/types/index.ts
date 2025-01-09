@@ -70,5 +70,5 @@ export interface ColumnItems {
     width?: string | number
     slot?: string
     config?: Record<string, any>
-    format?: Function
+    format?: (...data: any) => any
 }

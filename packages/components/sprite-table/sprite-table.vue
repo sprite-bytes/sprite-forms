@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type {TableConfig, ColumnItems} from "../../../types";
+import type {TableConfig, ColumnItems} from "../../types";
 
 defineOptions({
   name: 'SpriteTable'
@@ -29,7 +29,7 @@ const isFormatColumn = (item: ColumnItems) => {
           <slot :name="item.slot" :scope="{item, config, value: scope.row[item.name]}"></slot>
         </template>
         <template v-if="isFormatColumn(item)" #default="scope">
-          {{ item.format(item, scope) }}
+          {{ scope }}
         </template>
       </el-table-column>
     </template>

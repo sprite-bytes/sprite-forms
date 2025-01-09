@@ -2,9 +2,8 @@ import {createApp} from 'vue'
 import './style.css'
 import ElementPlus from 'element-plus'
 import zhCn from 'element-plus/es/locale/lang/zh-cn'
-// @ts-ignore
-import SpriteForms from "../packages/components/sprite-forms/index";
-import SpriteTable from "../packages/components/sprite-table/index";
+// import SpriteForms from "../dist/sprite-forms.js";
+import SpriteForms from "../packages";
 
 import 'element-plus/dist/index.css'
 import App from './App.vue'
@@ -13,8 +12,5 @@ const app = createApp(App)
 app.use(ElementPlus, {
     locale: zhCn,
 })
-// @ts-ignore
 app.use(SpriteForms)
-// @ts-ignore
-app.use(SpriteTable)
 app.mount('#app')

@@ -1,24 +1,25 @@
 <script setup lang="ts">
 
 import {onMounted, ref} from "vue";
-import {useFormItem} from "../../../hooks/use-form-item.ts";
+import {useFormItem} from "../../hooks/use-form-item.ts";
 
 defineOptions({
-  name: 'SpriteRadio'
+  name: 'SpriteCheckbox'
 })
 
 interface Props {
   labelKey?: string,
   valueKey?: string,
   options?: Record<string, any>[] | ((formData: Record<string, any>) => Record<string, any>[]),
-  value?: string | number | boolean
+  value?: Array<string | number | boolean>
 }
 
 const props = withDefaults(defineProps<Props>(), {
   labelKey: 'label',
   valueKey: 'value',
-  value: () => ''
+  value: () => []
 })
+
 const internalModel = ref(props.value);
 
 const {
@@ -28,7 +29,7 @@ const {
   options,
   handleChange,
   initOptions
-} = useFormItem(props, internalModel)
+} = useFormItem<Props>(props, internalModel)
 
 onMounted(() => {
   initOptions()
@@ -40,16 +41,17 @@ onMounted(() => {
     <slot v-if="viewSlot" :name="viewSlot"></slot>
     <template v-else>{{ viewValue }}</template>
   </template>
-  <el-radio-group
+  <el-checkbox-group
       v-else
+      @change="handleChange"
       v-model="internalModel"
   >
-    <el-radio
+    <el-checkbox
         v-for="item in options"
         :key="item[valueKey]"
         :label="item[labelKey]"
         :value="item[valueKey]"
     >
-    </el-radio>
-  </el-radio-group>
+    </el-checkbox>
+  </el-checkbox-group>
 </template>

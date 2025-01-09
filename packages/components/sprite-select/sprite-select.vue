@@ -1,11 +1,10 @@
 <script setup lang="ts">
 import {onMounted, ref} from "vue"
 
-import {useFormItem} from "../../../hooks/use-form-item.ts"
-import type {FormItemProps} from "../../../types"
+import {useFormItem} from "../../hooks/use-form-item.ts"
+import type {FormItemProps} from "../../types"
 
 defineOptions({name: 'SpriteSelect'})
-
 interface Props extends FormItemProps {
   value?: string | number | boolean
 }

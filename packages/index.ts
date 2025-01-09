@@ -1,6 +1,25 @@
-export * from './components/sprite-forms'
-export * from './components/sprite-table'
-export * from './components/sprite-select'
+import type { App } from 'vue'
 
-export * from './types'
-export * from './hooks/use-form-item.ts'
+import SpriteRadio from "./components/sprite-radio";
+import SpriteSelect from "./components/sprite-select";
+import SpriteCheckbox from "./components/sprite-checkbox";
+import SpriteForms from "./components/sprite-forms";
+import SpriteTable from "./components/sprite-table";
+
+const components = [
+    SpriteRadio,
+    SpriteForms,
+    SpriteSelect,
+    SpriteCheckbox,
+    SpriteTable,
+]
+
+const install = (app: App): void => {
+    components.forEach(component => app.component(component.name as string, component))
+}
+
+const Sprite = {
+    install
+}
+
+export default Sprite

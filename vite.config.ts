@@ -2,6 +2,7 @@ import {defineConfig} from 'vite'
 import vue from '@vitejs/plugin-vue'
 import path from "node:path"
 import dts from "vite-plugin-dts"
+import {fileURLToPath} from "node:url";
 // https://vite.dev/config/
 export default defineConfig({
     plugins: [
@@ -16,11 +17,16 @@ export default defineConfig({
             include: ['packages/**/*.d.ts', 'packages/**/*.vue', 'packages/**/*.ts'],
         })
     ],
-    resolve: {},
+    resolve: {
+        alias: {
+            '@': fileURLToPath(new URL('./packages', import.meta.url)),
+        }
+    },
     build: {
         rollupOptions: {
             external: ['vue'],
             output: {
+                exports: 'named',
                 globals: {
                     vue: 'Vue',
                 },
@@ -29,7 +35,7 @@ export default defineConfig({
         lib: {
             entry: path.resolve(__dirname, './packages/index.ts'),
             name: 'sprite-forms',
-            fileName: (format) => `sprite-forms.${format}.js`
+            fileName: 'sprite-forms'
         }
     },
 })
