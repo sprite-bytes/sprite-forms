@@ -14,8 +14,8 @@ function useFormItem<T>(props: T | any, model: any) {
     })
 
     const viewValue = computed(() => {
-        if(isFunction(props.format)) {
-            return props.format(model.value)
+        if (isFunction(props.format)) {
+            return props.format({value: model.value, formState: props.formState})
         }
         const findValue = options.value.find(((item: Record<string, any>) => item[props.valueKey] == model.value))
         return findValue ? findValue[props.labelKey] : model.value
@@ -31,7 +31,7 @@ function useFormItem<T>(props: T | any, model: any) {
         }
     }
 
-    async function initOptions() {
+    async function loadOptions() {
         isLoading.value = true
         let res = []
         if (isFunction(props.options)) {
@@ -52,7 +52,7 @@ function useFormItem<T>(props: T | any, model: any) {
         options,
         isLoading,
         handleChange,
-        initOptions
+        loadOptions
     }
 }
 

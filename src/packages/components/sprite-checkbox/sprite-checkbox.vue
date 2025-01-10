@@ -2,15 +2,11 @@
 
 import {onMounted, ref} from "vue";
 import {useFormItem} from "@packages/hooks/use-form-item.ts";
+import type {FormItemProps} from "@packages/types";
 
-defineOptions({
-  name: 'SpriteCheckbox'
-})
+defineOptions({name: 'SpriteCheckbox'})
 
-interface Props {
-  labelKey?: string,
-  valueKey?: string,
-  options?: Record<string, any>[] | ((formData: Record<string, any>) => Record<string, any>[]),
+interface Props extends FormItemProps {
   value?: Array<string | number | boolean>
 }
 
@@ -28,11 +24,16 @@ const {
   viewValue,
   options,
   handleChange,
-  initOptions
+  loadOptions
 } = useFormItem<Props>(props, internalModel)
 
 onMounted(() => {
-  initOptions()
+  loadOptions()
+})
+
+defineExpose({
+  loadOptions,
+  bindFieldName: props.name,
 })
 </script>
 

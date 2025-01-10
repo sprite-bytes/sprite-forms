@@ -38,23 +38,18 @@ const formItems = ref<FormItemConfig[]>([
     component: FormComponentType.INPUT,
     label: '姓名',
     name: 'name',
-    view: true,
-    format(data) {
-      return `${data?.hobby}你好`
-    },
-    readonly(formData: any) {
-      return formData.politicalOutlook !== 1;
-    },
-    disabled(formData: any) {
-      const {hobby = []} = formData;
-      return hobby.includes(1)
+    format({formState}) {
+      return `${formState?.age}你好`
     },
   },
   {
-    component: FormComponentType.INPUT_NUMBER,
+    component: ({formData}: any) => {
+      return formData?.age == 1 ? FormComponentType.INPUT_NUMBER : FormComponentType.INPUT
+    },
     label: '年龄',
     name: 'age',
-    change(data: string) {
+    change(data) {
+      data.loadOptions('politicalOutlook')
       // formState['politicalOutlook'] = undefined
       console.log('change', data)
     },
@@ -66,10 +61,6 @@ const formItems = ref<FormItemConfig[]>([
     labelKey: 'name',
     required: true,
     valueKey: 'value',
-    view(formData) {
-      console.log('view', formData)
-      return formData?.age === 20
-    },
     options: (data: any) => {
       return data.age == 1 ? [{value: 1, name: '党员',}, {value: 2, name: '团员'}]
           : [{value: 3, name: '党员1',}, {value: 4, name: '团员1',}]

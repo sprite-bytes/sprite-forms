@@ -5,6 +5,7 @@ import {useFormItem} from "@packages/hooks/use-form-item.ts"
 import type {FormItemProps} from "@packages/types"
 
 defineOptions({name: 'SpriteSelect'})
+
 interface Props extends FormItemProps {
   value?: string | number | boolean
 }
@@ -23,11 +24,16 @@ const {
   options,
   isLoading,
   handleChange,
-  initOptions
+  loadOptions
 } = useFormItem<Props>(props, internalModel)
 
 onMounted(() => {
-  initOptions()
+  loadOptions()
+})
+
+defineExpose({
+  loadOptions,
+  bindFieldName: props.name,
 })
 </script>
 

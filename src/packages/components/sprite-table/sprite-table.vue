@@ -1,16 +1,18 @@
 <script setup lang="ts">
 import type {TableConfig, ColumnItems} from "@packages/types";
 
-defineOptions({
-  name: 'SpriteTable'
-})
+defineOptions({name: 'SpriteTable'})
 
-
-defineProps<{
+interface Props {
   config?: TableConfig,
   columns: ColumnItems[]
   data: Record<string, any>[]
-}>()
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  columns: () => [],
+  data: () => []
+})
 
 const isFormatColumn = (item: ColumnItems) => {
   return typeof item?.format === 'function'
@@ -18,7 +20,7 @@ const isFormatColumn = (item: ColumnItems) => {
 </script>
 
 <template>
-  <el-table :data="data" v-bind="config">
+  <el-table :data="props.data" v-bind="config">
     <template v-for="item in columns" :key="item.name">
       <el-table-column
           :label="item.label"

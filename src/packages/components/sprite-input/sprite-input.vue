@@ -4,9 +4,7 @@ import {ref} from "vue";
 import {useFormItem} from "@packages/hooks/use-form-item.ts";
 import type {FormItemProps} from "@packages/types"
 
-defineOptions({
-  name: 'SpriteInput'
-})
+defineOptions({name: 'SpriteInput'})
 
 interface Props extends FormItemProps {
   value?: string

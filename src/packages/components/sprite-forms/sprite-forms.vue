@@ -1,15 +1,25 @@
 <script setup lang="ts">
 import {ref} from 'vue';
-import {isUndefined, omit} from "lodash";
+import {isFunction, isUndefined, omit} from "lodash";
 import {type FormConfig, type FormItemConfig} from "@packages/types";
+import type {FormInstance} from "element-plus";
+import type {ValidateFieldsError} from "async-validator";
 
 defineOptions({name: 'SpriteForms'})
 
-const props = defineProps<{
+interface Props {
   config?: FormConfig,
   formItems: FormItemConfig[]
   model: Record<string, any>
-}>()
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  config: () => ({
+    trigger: 'change',
+  }),
+  formItems: () => [],
+  model: () => ({})
+})
 
 const getRules = (item: FormItemConfig) => {
   if (Array.isArray(item?.rules)) {
@@ -19,7 +29,7 @@ const getRules = (item: FormItemConfig) => {
     return [{
       required: true,
       message: `${item.label || item.name}必填`,
-      trigger: 'change',
+      trigger: props?.config?.trigger,
     }]
   }
   return item?.rules || []
@@ -35,40 +45,37 @@ const getComponentProps = (item: FormItemConfig) => {
 
 // 判断表单项是否可见
 const isVisible = (item: FormItemConfig, formData: Record<string, any>) => {
-  if (typeof item.visible === 'function') {
+  if (isFunction(item.visible)) {
     return item.visible(formData);
   }
+  // 默认设置为 TRUE
   return isUndefined(item.visible) ? true : item.visible;
 };
 
 // 判断表单项是否禁用
 const isDisabled = (item: FormItemConfig, formData: Record<string, any>) => {
-  if (typeof item.disabled === 'function') {
-    return item.disabled(formData);
+  if (isFunction(item.mode)) {
+    return item.mode(formData);
   }
-  return !!item.disabled;
+  return item.mode === 'DISABLED';
 };
 
 // 判断表单项是否只读
 const isReadonly = (item: FormItemConfig, formData: Record<string, any>) => {
-  if (typeof item.readonly === 'function') {
-    return item.readonly(formData);
+  if (isFunction(item.mode)) {
+    return item.mode(formData);
   }
-  return !!item.readonly;
+  return item.mode === 'READONLY';
 };
 
-const formRef = ref()
+const formRef = ref<FormInstance>()
 const validate = () => {
   return new Promise((resolve, reject) => {
-    formRef.value?.validate((valid: boolean, errorMessage: {
-      field: string,
-      fieldValue: never,
-      message: string
-    }[]) => {
+    formRef.value?.validate((valid: boolean, invalidFields?: ValidateFieldsError) => {
       if (valid) {
         resolve(props.model)
       } else {
-        reject(errorMessage)
+        reject(invalidFields)
       }
     });
   })
@@ -94,10 +101,52 @@ const formData = new Proxy(props.model, {
   }
 })
 
-const handleChange = (data: any, item: FormItemConfig) => {
-  if (typeof item.change === 'function') {
-    item.change(data);
+/**
+ * 整个表单实例对象
+ */
+const formItemListRef = ref()
+
+/**
+ * 根据字段名获取当前字段绑定的组件实例
+ * @param targetField 字段名
+ */
+const getRef: (targetField: string) => any = (targetField) => {
+  for (const itemRef of formItemListRef.value) {
+    if (itemRef.bindFieldName === targetField) {
+      return itemRef
+    }
   }
+  return null
+}
+
+/**
+ * 加载字典数据，如下拉选择、多选、单选
+ * @param targetField 目标字段
+ * @param params 自定义请求参数
+ */
+const loadOptions = (targetField: string, params: Record<string, any>) => {
+  const itemRef: any = getRef(targetField)
+  if (itemRef) {
+    itemRef.loadOptions(params)
+  }
+}
+
+const handleChange = (data: any, item: FormItemConfig) => {
+  if (isFunction(item.change)) {
+    item.change({
+      data,
+      getRef,
+      loadOptions,
+      refs: formItemListRef.value,
+    });
+  }
+}
+
+const getComponent = (item: FormItemConfig, formData: Record<string, any>) => {
+  if (isFunction(item.component)) {
+    return item.component({item, formData})
+  }
+  return item.component
 }
 </script>
 
@@ -119,12 +168,13 @@ const handleChange = (data: any, item: FormItemConfig) => {
               <slot v-if="item.slot" :name="item.slot" :scope="{item, value: props.model[item.name]}"/>
               <component
                   v-else
-                  :is="item.component"
+                  :is="getComponent(item, props.model)"
                   :disabled="isDisabled(item, props.model)"
                   :readonly="isReadonly(item, props.model)"
                   :formState="props.model"
                   v-model="formData[item.name]"
                   v-bind="getComponentProps(item)"
+                  ref="formItemListRef"
                   @change="(data: any) => handleChange(data, item)"
               />
             </el-form-item>
