@@ -1,37 +1,44 @@
 import {computed, ref} from "vue";
 
-import {isFunction, isUndefined} from "lodash";
+import {isEqual, isFunction, isNull, isUndefined} from "lodash";
+import {DisplayMode, type FormItemProps} from "@packages/types";
 
-function useFormItem<T>(props: T | any, model: any) {
+function useFormItem(props: FormItemProps, formItemValue: any) {
+    const {valueKey, labelKey} = props
     const options = ref([])
-    const isLoading = ref(false)
 
     const isView = computed(() => {
-        if (isFunction(props.view)) {
-            return props.view(props.formState)
+        if (isFunction(props.mode)) {
+            return props.mode({...props, value: formItemValue.value}) === DisplayMode.VIEW
         }
-        return isUndefined(props.view) ? false : props.view
+        return isUndefined(props.mode) ? false : props.mode === DisplayMode.VIEW
     })
 
     const viewValue = computed(() => {
         if (isFunction(props.format)) {
-            return props.format({value: model.value, formState: props.formState})
+            return props.format({...props, value: formItemValue.value})
         }
-        const findValue = options.value.find(((item: Record<string, any>) => item[props.valueKey] == model.value))
-        return findValue ? findValue[props.labelKey] : model.value
+        let viewVal = formItemValue.value
+        if (options.value.length && valueKey && labelKey) {
+            const findValue = options.value.find(((item: Record<string, any>) => isEqual(item[valueKey], formItemValue.value)))
+            const val = findValue?.[labelKey]
+            if (!(isNull(val) || isUndefined(val))) {
+                viewVal = val
+            }
+        }
+        return viewVal || props.emptyText
     })
 
     const viewSlot = computed(() => {
         return props.viewSlot
     })
 
-    const handleChange = () => {
-        if (isFunction(props.change)) {
-            props.change(model.value)
-        }
-    }
+    /**
+     * 选项组件相关，加载选项数据
+     */
+    const isLoading = ref(false)
 
-    async function loadOptions() {
+    async function loadOptions(params?: Record<string, any>) {
         isLoading.value = true
         let res = []
         if (isFunction(props.options)) {
@@ -39,10 +46,11 @@ function useFormItem<T>(props: T | any, model: any) {
         } else if (props.options) {
             res = props.options;
         } else if (isFunction(props.remoteOptions)) {
-            res = await props.remoteOptions(props.formState)
+            res = await props.remoteOptions({...props, params})
         }
         options.value = res
         isLoading.value = false
+        return res
     }
 
     return {
@@ -51,7 +59,6 @@ function useFormItem<T>(props: T | any, model: any) {
         viewValue,
         options,
         isLoading,
-        handleChange,
         loadOptions
     }
 }

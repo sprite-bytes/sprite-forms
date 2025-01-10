@@ -16,6 +16,15 @@ export enum FormComponentType {
     COLOR_PICKER = 'el-color-picker', // 颜色选择器
 }
 
+export enum DisplayMode {
+    VIEW = 'VIEW', // 详情
+    EDIT = 'EDIT', // 编辑
+    READONLY = 'READONLY', // 只读
+    DISABLED = 'DISABLED', // 禁用
+}
+
+export type PropFunction<T> = T | ((params?: Record<string, any>) => T | any)
+
 export interface ItemProps {
     optionProps?: Record<string, any> // 字段组件子组件属性
     suffixSlot?: string // 输入框头部内容，只对非 type="textarea" 有效
@@ -29,10 +38,6 @@ export interface ItemProps {
     loadingSlot?: string // SELECT 组件自定义 loading 内容
     labelSlot?: string // SELECT 组件自定义标签内容
 }
-
-export type PropFunction<T> = T | ((params?: Record<string, any>) => T | any)
-
-export type DisplayMode = "VIEW" | "EDIT" | "READONLY" | "DISABLED" | "VISIBLE"
 
 export interface FormItemConfig {
     name: string // 字段名
@@ -62,12 +67,12 @@ export interface FormItemConfig {
 }
 
 export interface FormItemProps extends FormItemConfig {
-    formState: Record<string, any> // 整个表单数据
+    formData: Record<string, any> // 整个表单数据
 }
 
 export interface FormConfig {
     trigger?: 'blur' | 'change'
-    rules?: FormRules // 表单校验规则（优先级小于字段属性定义）
+    rules?: FormRules[] // 表单校验规则（优先级小于字段属性定义）
     layout?: Record<string, any> // 表单布局配置（基于 ElRow & ElCol 组件实现）
     props?: Record<string, any> // 表单属性用于 ElForm 组件
     emptyText?: string // view 模式下空值展示的文本（优先级小于字段属性定义）

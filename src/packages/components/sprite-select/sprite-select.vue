@@ -3,6 +3,7 @@ import {onMounted, ref} from "vue"
 
 import {useFormItem} from "@packages/hooks/use-form-item.ts"
 import type {FormItemProps} from "@packages/types"
+import {FORM_ITEM_EMIT_NAME, OPTION_LABEL_KEY, OPTION_VALUE_KEY} from "@packages/constants";
 
 defineOptions({name: 'SpriteSelect'})
 
@@ -11,8 +12,8 @@ interface Props extends FormItemProps {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  labelKey: 'label',
-  valueKey: 'value',
+  labelKey: OPTION_LABEL_KEY,
+  valueKey: OPTION_VALUE_KEY,
 })
 
 const internalModel = ref(props.value);
@@ -23,9 +24,13 @@ const {
   viewValue,
   options,
   isLoading,
-  handleChange,
   loadOptions
-} = useFormItem<Props>(props, internalModel)
+} = useFormItem(props, internalModel)
+
+const emit = defineEmits([FORM_ITEM_EMIT_NAME]);
+const handleChange = () => {
+  emit(FORM_ITEM_EMIT_NAME, {...props, internalModel})
+}
 
 onMounted(() => {
   loadOptions()

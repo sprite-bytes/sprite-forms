@@ -3,6 +3,7 @@
 import {onMounted, ref} from "vue";
 import {useFormItem} from "@packages/hooks/use-form-item.ts";
 import type {FormItemProps} from "@packages/types";
+import {FORM_ITEM_EMIT_NAME} from "@packages/constants";
 
 defineOptions({name: 'SpriteCheckbox'})
 
@@ -13,7 +14,7 @@ interface Props extends FormItemProps {
 const props = withDefaults(defineProps<Props>(), {
   labelKey: 'label',
   valueKey: 'value',
-  value: () => []
+  value: () => ([])
 })
 
 const internalModel = ref(props.value);
@@ -23,9 +24,13 @@ const {
   viewSlot,
   viewValue,
   options,
-  handleChange,
   loadOptions
-} = useFormItem<Props>(props, internalModel)
+} = useFormItem(props, internalModel)
+
+const emit = defineEmits([FORM_ITEM_EMIT_NAME]);
+const handleChange = () => {
+  emit(FORM_ITEM_EMIT_NAME, {...props, internalModel})
+}
 
 onMounted(() => {
   loadOptions()

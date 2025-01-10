@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type {TableConfig, ColumnItems} from "@packages/types";
+import {isFunction} from "lodash";
 
 defineOptions({name: 'SpriteTable'})
 
@@ -15,7 +16,7 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const isFormatColumn = (item: ColumnItems) => {
-  return typeof item?.format === 'function'
+  return typeof isFunction(item?.format)
 }
 </script>
 
@@ -31,7 +32,7 @@ const isFormatColumn = (item: ColumnItems) => {
           <slot :name="item.slot" :scope="{item, config, value: scope.row[item.name]}"></slot>
         </template>
         <template v-if="isFormatColumn(item)" #default="scope">
-          {{ scope }}
+          {{ scope.row[item.name] }}
         </template>
       </el-table-column>
     </template>

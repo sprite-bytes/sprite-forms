@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import {ref} from 'vue';
+import {reactive, ref} from 'vue';
 import {isFunction, isUndefined, omit} from "lodash";
-import {type FormConfig, type FormItemConfig} from "@packages/types";
+import {DisplayMode, type FormConfig, type FormItemConfig} from "@packages/types";
 import type {FormInstance} from "element-plus";
 import type {ValidateFieldsError} from "async-validator";
+import {FORM_EMIT_NAME} from "@packages/constants";
 
 defineOptions({name: 'SpriteForms'})
 
@@ -21,6 +22,13 @@ const props = withDefaults(defineProps<Props>(), {
   model: () => ({})
 })
 
+const emit = defineEmits([FORM_EMIT_NAME]);
+
+const formData = reactive(props.model)
+
+/**
+ * 表单项校验规则
+ */
 const getRules = (item: FormItemConfig) => {
   if (Array.isArray(item?.rules)) {
     return item?.rules
@@ -35,74 +43,65 @@ const getRules = (item: FormItemConfig) => {
   return item?.rules || []
 }
 
+/**
+ * 表单组件属性
+ */
 const getComponentProps = (item: FormItemConfig) => {
   return {
-    // 忽略 disabled、readonly、options 属性，避免冲突
+    // 忽略 disabled、readonly 属性，避免冲突
     ...omit(item, 'disabled', 'readonly'),
-    ...item.props
+    // 字段组件配置
+    ...item.props,
   };
 };
 
-// 判断表单项是否可见
-const isVisible = (item: FormItemConfig, formData: Record<string, any>) => {
+/**
+ * 当前渲染组件类型
+ */
+const getComponent = (params: { index: number; item: FormItemConfig, value: any }) => {
+  const {item} = params;
+  if (isFunction(item.component)) {
+    return item.component({...params, formData: formData});
+  }
+  return item.component
+}
+
+/**
+ * 判断表单项是否可见
+ */
+const isVisible = (params: { index: number; item: FormItemConfig, value: any }) => {
+  const {item} = params;
   if (isFunction(item.visible)) {
-    return item.visible(formData);
+    return item.visible({...params, formData: formData});
   }
   // 默认设置为 TRUE
   return isUndefined(item.visible) ? true : item.visible;
 };
 
-// 判断表单项是否禁用
-const isDisabled = (item: FormItemConfig, formData: Record<string, any>) => {
+/**
+ * 判断表单项是否禁用
+ */
+const isDisabled = (params: { index: number; item: FormItemConfig, value: any }) => {
+  const {item} = params;
   if (isFunction(item.mode)) {
-    return item.mode(formData);
+    return item.mode({...params, formData: formData});
   }
-  return item.mode === 'DISABLED';
+  return item.mode === DisplayMode.DISABLED;
 };
-
-// 判断表单项是否只读
-const isReadonly = (item: FormItemConfig, formData: Record<string, any>) => {
-  if (isFunction(item.mode)) {
-    return item.mode(formData);
-  }
-  return item.mode === 'READONLY';
-};
-
-const formRef = ref<FormInstance>()
-const validate = () => {
-  return new Promise((resolve, reject) => {
-    formRef.value?.validate((valid: boolean, invalidFields?: ValidateFieldsError) => {
-      if (valid) {
-        resolve(props.model)
-      } else {
-        reject(invalidFields)
-      }
-    });
-  })
-}
-
-const resetFields = () => {
-  formRef.value?.resetFields()
-}
-
-defineExpose({
-  validate,
-  resetFields,
-  formRef,
-})
-
-const emit = defineEmits(['change']);
-
-const formData = new Proxy(props.model, {
-  set(target, property: string, value) {
-    emit('change', {target, property, value})
-    target[property] = value;
-    return true
-  }
-})
 
 /**
- * 整个表单实例对象
+ * 判断表单项是否只读
+ */
+const isReadonly = (params: { index: number; item: FormItemConfig, value: any }) => {
+  const {item} = params;
+  if (isFunction(item.mode)) {
+    return item.mode({...params, formData: formData});
+  }
+  return item.mode === DisplayMode.READONLY;
+};
+
+/**
+ * 整个渲染的表单实例对象
  */
 const formItemListRef = ref()
 
@@ -110,11 +109,23 @@ const formItemListRef = ref()
  * 根据字段名获取当前字段绑定的组件实例
  * @param targetField 字段名
  */
-const getRef: (targetField: string) => any = (targetField) => {
+const getInstanceByField: (targetField: string) => any = (targetField) => {
   for (const itemRef of formItemListRef.value) {
     if (itemRef.bindFieldName === targetField) {
       return itemRef
     }
+  }
+  return null
+}
+
+/**
+ * 根据字段名获取当前字段配置
+ * @param targetField 字段名
+ */
+const getPropsByField: (targetField: string) => FormItemConfig | null = (targetField) => {
+  const findIndex = props.formItems.findIndex(item => item.name === targetField)
+  if (findIndex >= 0) {
+    return props.formItems[findIndex]
   }
   return null
 }
@@ -125,36 +136,71 @@ const getRef: (targetField: string) => any = (targetField) => {
  * @param params 自定义请求参数
  */
 const loadOptions = (targetField: string, params: Record<string, any>) => {
-  const itemRef: any = getRef(targetField)
-  if (itemRef) {
-    itemRef.loadOptions(params)
+  const itemRef: any = getInstanceByField(targetField)
+  if (itemRef && isFunction(itemRef.loadOptions)) {
+    return itemRef.loadOptions(params)
   }
 }
 
-const handleChange = (data: any, item: FormItemConfig) => {
+/**
+ * 表单数据发生改变时触发
+ */
+const handleChange = (params: { index: number, item: FormItemConfig, event: any }) => {
+  const {item} = params;
+  const payload = {
+    ...params,
+    loadOptions,
+    getInstanceByField,
+    getPropsByField,
+    formData: formData,
+    refs: formItemListRef.value,
+  }
   if (isFunction(item.change)) {
-    item.change({
-      data,
-      getRef,
-      loadOptions,
-      refs: formItemListRef.value,
-    });
+    item.change(payload);
   }
+  emit(FORM_EMIT_NAME, payload)
 }
 
-const getComponent = (item: FormItemConfig, formData: Record<string, any>) => {
-  if (isFunction(item.component)) {
-    return item.component({item, formData})
-  }
-  return item.component
+/**
+ * 表单方法相关
+ */
+const formRef = ref<FormInstance>()
+const validate = () => {
+  return new Promise((resolve, reject) => {
+    formRef.value?.validate((valid: boolean, invalidFields?: ValidateFieldsError) => {
+      if (valid) {
+        resolve(formData)
+      } else {
+        reject(invalidFields)
+      }
+    });
+  })
 }
+
+/**
+ * 重置表单
+ */
+const resetFields = () => {
+  formRef.value?.resetFields()
+}
+
+/**
+ * @validate 表单校验
+ * @resetFields 表单重置
+ * @formRef 表单实例对象
+ */
+defineExpose({
+  validate,
+  resetFields,
+  formRef,
+})
 </script>
 
 <template>
   <el-form class="sprite-forms" ref="formRef" :model="formData" :rules="config?.rules" v-bind="config?.props">
     <el-row v-bind="config?.layout">
-      <template v-for="item in formItems" :key="item.name">
-        <template v-if="isVisible(item, props.model)">
+      <template v-for="(item, index) in formItems" :key="item.name">
+        <template v-if="isVisible({index,item, value: formData[item.name]})">
           <slot v-if="item?.customSlot" :name="item.customSlot"></slot>
           <el-col v-else v-bind="item?.column">
             <el-form-item
@@ -165,17 +211,17 @@ const getComponent = (item: FormItemConfig, formData: Record<string, any>) => {
             >
               <slot v-if="item.labelSlot" :name="item.labelSlot"/>
               <slot v-if="item.errorSlot" :name="item.errorSlot"/>
-              <slot v-if="item.slot" :name="item.slot" :scope="{item, value: props.model[item.name]}"/>
+              <slot v-if="item.slot" :name="item.slot"/>
               <component
                   v-else
-                  :is="getComponent(item, props.model)"
-                  :disabled="isDisabled(item, props.model)"
-                  :readonly="isReadonly(item, props.model)"
-                  :formState="props.model"
-                  v-model="formData[item.name]"
-                  v-bind="getComponentProps(item)"
                   ref="formItemListRef"
-                  @change="(data: any) => handleChange(data, item)"
+                  :is="getComponent({index,item, value: formData[item.name]})"
+                  v-model="formData[item.name]"
+                  @change="(event: Record<string, any>) => handleChange({index, item, event})"
+                  :formData="formData"
+                  :disabled="isDisabled({index, item, value: formData[item.name]})"
+                  :readonly="isReadonly({index,item, value: formData[item.name]})"
+                  v-bind="getComponentProps(item)"
               />
             </el-form-item>
           </el-col>

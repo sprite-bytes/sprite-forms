@@ -1,8 +1,17 @@
 <script setup lang="ts">
 import {reactive, ref} from "vue";
 
-import {FormComponentType, type FormConfig, type FormItemConfig} from "@packages/types";
+import {DisplayMode, FormComponentType, type FormConfig, type FormItemConfig} from "@packages/types";
 import {ElMessage} from "element-plus";
+
+const getOptions = (params: any) => {
+  const list = [{value: 1, name: `党员${params.label}`,}, {value: 2, name: `团员${params.label}`}]
+  return new Promise(resolve => {
+    setTimeout(() => {
+      resolve(list)
+    }, 2000)
+  })
+}
 
 const formConfig = reactive<FormConfig>({
   layout: {
@@ -25,21 +34,21 @@ const formItems = ref<FormItemConfig[]>([
     label: '性别',
     name: 'gender',
     required: true,
-    options: [{value: 1, label: '男',}, {value: 2, label: '女'}],
+    options: [{value: 1, label: '男'}, {value: 2, label: '女'}],
   },
   {
     component: FormComponentType.CHECKBOX,
     label: '爱好',
     name: 'hobby',
     required: true,
-    options: [{value: 1, label: '语文',}, {value: 2, label: '数学',}, {value: 3, label: '物理'}],
+    options: [{value: 1, label: '语文'}, {value: 2, label: '数学'}, {value: 3, label: '物理'}],
   },
   {
     component: FormComponentType.INPUT,
     label: '姓名',
     name: 'name',
-    format({formState}) {
-      return `${formState?.age}你好`
+    format({value}) {
+      return `姓名：${value}`
     },
   },
   {
@@ -48,10 +57,19 @@ const formItems = ref<FormItemConfig[]>([
     },
     label: '年龄',
     name: 'age',
-    change(data) {
-      data.loadOptions('politicalOutlook')
-      // formState['politicalOutlook'] = undefined
-      console.log('change', data)
+    format({value}) {
+      return `${value}岁`
+    },
+    mode: DisplayMode.EDIT,
+    change: async function (params) {
+      console.log('params=>', params)
+      const {loadOptions, getPropsByField, getInstanceByField} = params
+      const props = getPropsByField('politicalOutlook')
+      console.log('props=>', props)
+      const instance = getInstanceByField('politicalOutlook')
+      console.log('instance=>', instance)
+      const result = await loadOptions('politicalOutlook', {label: '@'})
+      console.log('result=>', result)
     },
   },
   {
@@ -61,9 +79,8 @@ const formItems = ref<FormItemConfig[]>([
     labelKey: 'name',
     required: true,
     valueKey: 'value',
-    options: (data: any) => {
-      return data.age == 1 ? [{value: 1, name: '党员',}, {value: 2, name: '团员'}]
-          : [{value: 3, name: '党员1',}, {value: 4, name: '团员1',}]
+    remoteOptions: ({params}: any) => {
+      return getOptions({label: params?.label || '#'})
     }
   },
   {
@@ -126,23 +143,14 @@ const formItems = ref<FormItemConfig[]>([
     name: 'birthday',
   },
   {
-    component: FormComponentType.RATE,
-    label: '评价',
-    name: 'rate',
-  },
-  {
     component: FormComponentType.COLOR_PICKER,
     label: '喜欢的颜色',
     name: 'color',
   },
   {
-    name: 'post',
-    label: '岗位',
-    slot: 'postSlot',
-  },
-  {
-    name: 'mobile',
-    customSlot: 'mobileSlot',
+    component: FormComponentType.RATE,
+    label: '评价',
+    name: 'rate',
   }
 ])
 
@@ -150,7 +158,8 @@ const spriteFormsRef = ref()
 const submitForm = () => {
   spriteFormsRef.value.validate().then(() => {
     ElMessage.success('操作成功')
-  }).catch(() => {
+  }).catch((error: any) => {
+    console.log('error=>', error)
     ElMessage.warning('请填写必填信息')
   })
 }
