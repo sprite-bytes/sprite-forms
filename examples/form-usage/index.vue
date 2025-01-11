@@ -3,7 +3,8 @@ import {reactive, ref} from "vue";
 
 import type {FormConfig, FormItemConfig} from "@packages/types";
 import {ElMessage} from "element-plus";
-import {DisplayMode, FormComponentType} from "@packages/enums";
+import {DisplayMode, FormElemType} from "@packages/enums";
+import SpriteForms from "@packages/components/sprite-forms/sprite-forms.vue";
 
 const getOptions = (params: any) => {
   const list = [{value: 1, name: `党员${params.label}`,}, {value: 2, name: `团员${params.label}`}]
@@ -31,21 +32,21 @@ const formState = reactive<Record<string, any>>({
 
 const formItems = ref<FormItemConfig[]>([
   {
-    component: FormComponentType.RADIO,
+    component: FormElemType.RADIO,
     label: '性别',
     name: 'gender',
     required: true,
     options: [{value: 1, label: '男'}, {value: 2, label: '女'}],
   },
   {
-    component: FormComponentType.CHECKBOX,
+    component: FormElemType.CHECKBOX,
     label: '爱好',
     name: 'hobby',
     required: true,
     options: [{value: 1, label: '语文'}, {value: 2, label: '数学'}, {value: 3, label: '物理'}],
   },
   {
-    component: FormComponentType.INPUT,
+    component: FormElemType.INPUT,
     label: '姓名',
     name: 'name',
     format({value}) {
@@ -57,7 +58,7 @@ const formItems = ref<FormItemConfig[]>([
   },
   {
     component: ({formData}: any) => {
-      return formData?.age == 1 ? FormComponentType.INPUT_NUMBER : FormComponentType.INPUT
+      return formData?.age == 1 ? FormElemType.INPUT_NUMBER : FormElemType.INPUT
     },
     label: '年龄',
     name: 'age',
@@ -77,7 +78,7 @@ const formItems = ref<FormItemConfig[]>([
     },
   },
   {
-    component: FormComponentType.SELECT,
+    component: FormElemType.SELECT,
     label: '政治面貌',
     name: 'politicalOutlook',
     labelKey: 'name',
@@ -88,7 +89,7 @@ const formItems = ref<FormItemConfig[]>([
     }
   },
   {
-    component: FormComponentType.TREE_SELECT,
+    component: FormElemType.TREE_SELECT,
     label: '地址',
     name: 'address',
     options: [
@@ -127,27 +128,27 @@ const formItems = ref<FormItemConfig[]>([
     ]
   },
   {
-    component: FormComponentType.SWITCH,
+    component: FormElemType.SWITCH,
     label: '是否通过',
     name: 'whetherPass',
   },
   {
-    component: FormComponentType.SLIDER,
+    component: FormElemType.SLIDER,
     label: '意愿度',
     name: 'willingness',
   },
   {
-    component: FormComponentType.TIME_PICKER,
+    component: FormElemType.TIME_PICKER,
     label: '起床时间',
     name: 'wakeUpTime',
   },
   {
-    component: FormComponentType.DATE_PICKER,
+    component: FormElemType.DATE_PICKER,
     label: '出生年月',
     name: 'birthday',
   },
   {
-    component: FormComponentType.COLOR_PICKER,
+    component: FormElemType.COLOR_PICKER,
     label: '喜欢的颜色',
     name: 'color',
     mode: ({formData}: any) => {
@@ -155,7 +156,7 @@ const formItems = ref<FormItemConfig[]>([
     }
   },
   {
-    component: FormComponentType.RATE,
+    component: FormElemType.RATE,
     label: '评价',
     name: 'rate',
   }

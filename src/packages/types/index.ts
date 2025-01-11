@@ -1,5 +1,5 @@
 import type {FormRules} from 'element-plus'
-import {DisplayMode, FormComponentType} from "@packages/enums";
+import {DisplayMode, FormElemType} from "@packages/enums";
 
 export type PropFunction<T> = T | ((params?: Record<string, any>) => T | any)
 
@@ -34,7 +34,7 @@ export interface FormItemChangeParams {
 export interface FormItemConfig {
     name: string // 字段名
     label?: string // 字段描述
-    component?: PropFunction<FormComponentType | string> // 字段组件
+    component?: PropFunction<FormElemType | string> // 字段组件
     mode?: PropFunction<DisplayMode> // 组件展示模式
     visible?: PropFunction<boolean> // 组件隐藏
     rules?: PropFunction<FormRules>, // 字段校验（优先级最高）
@@ -81,4 +81,6 @@ export interface ColumnItems {
     slot?: string
     config?: Record<string, any>
     format?: (data: any) => any
+    component?: PropFunction<FormElemType | string> // 字段组件
+    formItemProps?: Record<string, any> // 字段组件父组件配置（ el-form-item）
 }

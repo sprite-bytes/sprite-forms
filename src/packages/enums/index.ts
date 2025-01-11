@@ -5,7 +5,7 @@ export enum DisplayMode {
     DISABLED = 'DISABLED', // 禁用
 }
 
-export enum FormComponentType {
+export enum FormElemType {
     RADIO = 'sprite-radio', // 单选框
     CHECKBOX = 'sprite-checkbox', // 多选框
     INPUT = 'sprite-input', // 输入框
