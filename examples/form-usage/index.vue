@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import {reactive, ref} from "vue";
 
-import {DisplayMode, FormComponentType, type FormConfig, type FormItemConfig} from "@packages/types";
+import type {FormConfig, FormItemConfig} from "@packages/types";
 import {ElMessage} from "element-plus";
+import {DisplayMode, FormComponentType} from "@packages/enums";
 
 const getOptions = (params: any) => {
   const list = [{value: 1, name: `党员${params.label}`,}, {value: 2, name: `团员${params.label}`}]

@@ -1,7 +1,8 @@
 import {computed, ref} from "vue";
 
 import {isEqual, isFunction, isNull, isUndefined} from "lodash";
-import {DisplayMode, type FormItemProps} from "@packages/types";
+import type {FormItemProps} from "@packages/types";
+import {DisplayMode} from "@packages/enums";
 
 function useFormItem(props: FormItemProps, formItemValue: any) {
     const {valueKey, labelKey} = props

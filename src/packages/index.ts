@@ -1,4 +1,4 @@
-import type { App } from 'vue'
+import type {App} from 'vue'
 
 import SpriteForms from "./components/sprite-forms";
 import SpriteTable from "./components/sprite-table";
@@ -16,6 +16,7 @@ import SpriteTimePicker from "./components/sprite-time-picker";
 import SpriteTimeSelect from "./components/sprite-time-select";
 import SpriteDatePicker from "./components/sprite-date-picker";
 import SpriteTreeSelect from "./components/sprite-tree-select";
+import SpriteUpload from "./components/sprite-upload";
 
 const components = [
     SpriteRadio,
@@ -33,7 +34,8 @@ const components = [
     SpriteTimePicker,
     SpriteTimeSelect,
     SpriteDatePicker,
-    SpriteTreeSelect
+    SpriteTreeSelect,
+    SpriteUpload,
 ]
 
 const install = (app: App): void => {

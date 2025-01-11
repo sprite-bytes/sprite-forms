@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import {reactive, ref} from 'vue';
 import {isFunction, isUndefined, omit} from "lodash";
-import {DisplayMode, type FormConfig, FormItemConfig, FormItemChangeParams} from "@packages/types";
+import type {FormConfig, FormItemConfig, FormItemChangeParams} from "@packages/types";
 import type {FormInstance} from "element-plus";
 import type {ValidateFieldsError} from "async-validator";
 import {FORM_EMIT_NAME} from "@packages/constants";
+import {DisplayMode} from "@packages/enums";
 
 defineOptions({name: 'SpriteForms'})
 
