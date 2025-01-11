@@ -53,6 +53,24 @@ defineExpose({
       @change="handleChange"
       v-model="internalModel"
   >
+    <template #header v-if="props?.itemProps?.headerSlot">
+      <slot :name="props.itemProps.headerSlot"></slot>
+    </template>
+    <template #footer v-if="props?.itemProps?.footerSlot">
+      <slot :name="props.itemProps.footerSlot"></slot>
+    </template>
+    <template #prefix v-if="props?.itemProps?.prefixSlot">
+      <slot :name="props.itemProps.prefixSlot"></slot>
+    </template>
+    <template #empty v-if="props?.itemProps?.emptySlot">
+      <slot :name="props.itemProps.emptySlot"></slot>
+    </template>
+    <template #loading v-if="props?.itemProps?.loadingSlot">
+      <slot :name="props.itemProps.loadingSlot"></slot>
+    </template>
+    <template #label v-if="props?.itemProps?.labelSlot">
+      <slot :name="props.itemProps.labelSlot"></slot>
+    </template>
     <el-option
         v-for="item in options"
         :key="item[valueKey]"

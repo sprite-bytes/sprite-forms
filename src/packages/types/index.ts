@@ -4,16 +4,18 @@ export enum FormComponentType {
     RADIO = 'sprite-radio', // 单选框
     CHECKBOX = 'sprite-checkbox', // 多选框
     INPUT = 'sprite-input', // 输入框
-    INPUT_NUMBER = 'el-input-number', // 计数器
+    INPUT_NUMBER = 'sprite-input-number', // 计数器
     SELECT = 'sprite-select', // 选择器
-    CASCADER = 'el-cascader', // 级联选择器
-    SWITCH = 'el-switch', // 开关
-    SLIDER = 'el-slider', // 滑块
-    TIME_PICKER = 'el-time-picker', // 时间选择器
-    DATE_PICKER = 'el-date-picker', // 日期选择器
-    UPLOAD = 'el-upload', // 上传
-    RATE = 'el-rate', // 评分
-    COLOR_PICKER = 'el-color-picker', // 颜色选择器
+    CASCADER = 'sprite-cascader', // 级联选择器
+    SWITCH = 'sprite-switch', // 开关
+    SLIDER = 'sprite-slider', // 滑块
+    TIME_PICKER = 'sprite-time-picker', // 时间选择器
+    TIME_SELECT = 'sprite-time-select', // 时间选择
+    TREE_SELECT = 'sprite-tree-select', // 树形选择
+    DATE_PICKER = 'sprite-date-picker', // 日期选择器
+    UPLOAD = 'sprite-upload', // 上传
+    RATE = 'sprite-rate', // 评分
+    COLOR_PICKER = 'sprite-color-picker', // 颜色选择器
 }
 
 export enum DisplayMode {
@@ -37,6 +39,20 @@ export interface ItemProps {
     tagSlot?: string // SELECT 组件自定义标签内容
     loadingSlot?: string // SELECT 组件自定义 loading 内容
     labelSlot?: string // SELECT 组件自定义标签内容
+    decreaseIconSlot?: string // 自定义输入框按钮减少图标
+    increaseIconSlot?: string // 自定义输入框按钮增加图标
+    activeActionSlot?: string // 自定义 active 行为
+    inactiveActionSlot?: string // 自定义 inactive 行为
+}
+
+export interface FormItemChangeParams {
+    loadOptions: (targetField: string, params?: Record<string, any>) => any
+    getInstanceByField: (targetField: string) => any
+    getPropsByField: (targetField: string) => FormItemConfig | undefined
+    formData: Record<string, any>
+    instance: any
+
+    [key: string]: any
 }
 
 export interface FormItemConfig {
@@ -60,7 +76,7 @@ export interface FormItemConfig {
     formItemProps?: Record<string, any> // 字段组件父组件配置（ el-form-item）
     props?: Record<string, any> // 字段组件配置
     itemProps?: ItemProps // 字段组件配置子组件配置（比如下拉选择的 el-option、el-radio、el-checkbox 属性、插槽以及其他组件（el-input）的插槽）
-    change?: (data: any) => void // 字段值改变时触发
+    change?: (data: FormItemChangeParams) => void // 字段值改变时触发
     formChange?: (data: any) => void // 表单数据改变时触发
     format?: (data: any) => any // 仅在 VIEW 模式下格式化展示的文本
     emptyText?: string // VIEW 模式下为 undefined、null 时展示的默认文本

@@ -50,6 +50,9 @@ const formItems = ref<FormItemConfig[]>([
     format({value}) {
       return `姓名：${value}`
     },
+    change() {
+
+    }
   },
   {
     component: ({formData}: any) => {
@@ -84,7 +87,7 @@ const formItems = ref<FormItemConfig[]>([
     }
   },
   {
-    component: FormComponentType.CASCADER,
+    component: FormComponentType.TREE_SELECT,
     label: '地址',
     name: 'address',
     options: [
@@ -146,6 +149,9 @@ const formItems = ref<FormItemConfig[]>([
     component: FormComponentType.COLOR_PICKER,
     label: '喜欢的颜色',
     name: 'color',
+    mode: ({formData}: any) => {
+      return formData.age != 23 ? DisplayMode.VIEW : DisplayMode.EDIT
+    }
   },
   {
     component: FormComponentType.RATE,

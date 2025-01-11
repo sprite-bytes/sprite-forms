@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {reactive, ref} from 'vue';
 import {isFunction, isUndefined, omit} from "lodash";
-import {DisplayMode, type FormConfig, type FormItemConfig} from "@packages/types";
+import {DisplayMode, type FormConfig, FormItemConfig, FormItemChangeParams} from "@packages/types";
 import type {FormInstance} from "element-plus";
 import type {ValidateFieldsError} from "async-validator";
 import {FORM_EMIT_NAME} from "@packages/constants";
@@ -84,7 +84,7 @@ const isVisible = (params: { index: number; item: FormItemConfig, value: any }) 
 const isDisabled = (params: { index: number; item: FormItemConfig, value: any }) => {
   const {item} = params;
   if (isFunction(item.mode)) {
-    return item.mode({...params, formData: formData});
+    return item.mode({...params, formData: formData}) === DisplayMode.DISABLED;
   }
   return item.mode === DisplayMode.DISABLED;
 };
@@ -95,7 +95,7 @@ const isDisabled = (params: { index: number; item: FormItemConfig, value: any })
 const isReadonly = (params: { index: number; item: FormItemConfig, value: any }) => {
   const {item} = params;
   if (isFunction(item.mode)) {
-    return item.mode({...params, formData: formData});
+    return item.mode({...params, formData: formData}) === DisplayMode.READONLY;
   }
   return item.mode === DisplayMode.READONLY;
 };
@@ -122,12 +122,11 @@ const getInstanceByField: (targetField: string) => any = (targetField) => {
  * 根据字段名获取当前字段配置
  * @param targetField 字段名
  */
-const getPropsByField: (targetField: string) => FormItemConfig | null = (targetField) => {
+const getPropsByField: (targetField: string) => FormItemConfig | undefined = (targetField) => {
   const findIndex = props.formItems.findIndex(item => item.name === targetField)
   if (findIndex >= 0) {
     return props.formItems[findIndex]
   }
-  return null
 }
 
 /**
@@ -135,7 +134,7 @@ const getPropsByField: (targetField: string) => FormItemConfig | null = (targetF
  * @param targetField 目标字段
  * @param params 自定义请求参数
  */
-const loadOptions = (targetField: string, params: Record<string, any>) => {
+const loadOptions = (targetField: string, params?: Record<string, any>) => {
   const itemRef: any = getInstanceByField(targetField)
   if (itemRef && isFunction(itemRef.loadOptions)) {
     return itemRef.loadOptions(params)
@@ -146,17 +145,17 @@ const loadOptions = (targetField: string, params: Record<string, any>) => {
  * 表单数据发生改变时触发
  */
 const handleChange = (params: { index: number, item: FormItemConfig, event: any }) => {
-  const {item} = params;
-  const payload = {
+  const {item} = params || {};
+  const payload: FormItemChangeParams = {
     ...params,
     loadOptions,
     getInstanceByField,
     getPropsByField,
     formData: formData,
-    refs: formItemListRef.value,
+    instance: formItemListRef.value,
   }
   if (isFunction(item.change)) {
-    item.change(payload);
+    item.change(payload)
   }
   emit(FORM_EMIT_NAME, payload)
 }

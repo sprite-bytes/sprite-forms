@@ -42,9 +42,9 @@ function useFormItem(props: FormItemProps, formItemValue: any) {
         isLoading.value = true
         let res = []
         if (isFunction(props.options)) {
-            res = props.options(props.formState);
+            res = props.options({...props, params});
         } else if (props.options) {
-            res = props.options;
+            res = props.options
         } else if (isFunction(props.remoteOptions)) {
             res = await props.remoteOptions({...props, params})
         }
