@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-import {ref} from "vue";
+import {onMounted, ref} from "vue";
 import {useFormItem} from "@packages/hooks/use-form-item.ts";
 import type {FormItemProps} from "@packages/types"
 
@@ -17,9 +17,13 @@ const {
   isView,
   viewSlot,
   viewValue,
-  options
+  options,
+  loadOptions
 } = useFormItem(props, internalModel)
 
+onMounted(() => {
+  loadOptions()
+})
 </script>
 
 <template>
