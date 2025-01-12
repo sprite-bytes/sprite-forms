@@ -3,8 +3,8 @@
 npm install sprite-forms
 ```
 ### SpriteForms
-#### 表单配置项（FormItemConfig）
-- **name** `string` <font color="#3574f0">必填</font>
+#### 表单配置项 `FormItemConfig`
+- **name** `string` `必填`
     >字段名
 - **label**: `string` `非必填`
     >字段描述
@@ -51,3 +51,38 @@ npm install sprite-forms
 - **emptyText**: `string` `非必填`
   >VIEW 模式下为 undefined、null 时展示的默认文本
 ### SpriteTable
+#### 列配置项 `ColumnItem`
+- name: `string` `必填`
+  >列字段名
+- label: `string` `非必填`
+  >列字段描述
+- width: `string | number` `非必填`
+  >列宽
+- rules: `PropFunction<FormRules>` `非必填`
+  >字段校验（优先级最高）
+- customSlot: `string` `非必填`
+  >字段自定义插槽（插槽脱离 el-form-item 组件）
+- slot: `string` `非必填`
+  >字段插槽（插槽在 el-form-item 组件里面）
+- props: `Record<string, any>` `非必填`
+  >el-table-column 配置
+- formItemProps: `Record<string, any>` `非必填`
+  >字段组件父组件配置（ el-form-item）
+- component: `PropFunction<FormElemType | string | false>` `非必填`
+  >单元格表单组件（如果返回 false 则不使用表单组件）
+- format: `PropFunction<any>` `非必填`
+  >格式化单元格的值
+- change: `(data: CellChangeParams) => void` `非必填`
+  >字段值改变时触发
+- options:` PropFunction<Record<string, any>[]>` `非必填`
+  >所有选项类型组件的选项数据
+- remoteOptions: `PropFunction<Promise<Record<string, any>[]>>` `非必填`
+  >所有选项类型组件的远程选项数据
+- valueKey: `string` `非必填`
+  >选项值字段
+- labelKey: `string` `非必填`
+  >选项描述字段
+- required: `PropFunction<boolean>` `非必填`
+  >字段必填（简要必填配置方式）
+- emptyText: `string` `非必填`
+  >为 undefined、null 时展示的默认文本
