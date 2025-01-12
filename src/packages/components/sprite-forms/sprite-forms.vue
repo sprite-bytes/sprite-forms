@@ -77,7 +77,7 @@ const isVisible = (params: { index: number; item: FormItemConfig, value: any }) 
   }
   // 默认设置为 TRUE
   return isUndefined(item.visible) ? true : item.visible;
-};
+}
 
 /**
  * 判断表单项是否禁用
@@ -88,7 +88,7 @@ const isDisabled = (params: { index: number; item: FormItemConfig, value: any })
     return item.mode({...params, formData: formData}) === DisplayMode.DISABLED;
   }
   return item.mode === DisplayMode.DISABLED;
-};
+}
 
 /**
  * 判断表单项是否只读
@@ -99,7 +99,7 @@ const isReadonly = (params: { index: number; item: FormItemConfig, value: any })
     return item.mode({...params, formData: formData}) === DisplayMode.READONLY;
   }
   return item.mode === DisplayMode.READONLY;
-};
+}
 
 /**
  * 整个渲染的表单实例对象

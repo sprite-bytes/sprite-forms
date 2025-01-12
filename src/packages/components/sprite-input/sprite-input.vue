@@ -19,7 +19,10 @@ const {
   viewValue,
 } = useFormItem(props, internalModel)
 
-
+defineExpose({
+  bindFieldName: props.name,
+  scope: props.scope
+})
 </script>
 
 <template>
