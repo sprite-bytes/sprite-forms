@@ -49,7 +49,9 @@ const columns = reactive<ColumnItem[]>([
     }
   },
   {
-    component: FormElemType.SELECT,
+    component: ({row}: any) => {
+      return row.age > 10 ? FormElemType.SELECT : FormElemType.RADIO
+    },
     label: '政治面貌',
     name: 'politicalOutlook',
     labelKey: 'name',
