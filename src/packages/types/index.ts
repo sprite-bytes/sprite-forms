@@ -75,6 +75,9 @@ export interface TableConfig {
     emptyText?: string // 空值展示的文本（优先级小于列配置定义）
     formProps?: Record<string, any>
     tableProps?: Record<string, any>
+    defaultSlot?: string
+    appendSlot?: string
+    emptySlot?: string
 }
 
 export interface CellChangeParams {
@@ -91,6 +94,7 @@ export interface ColumnItem {
     name: string // 列字段名
     label?: string // 列字段描述
     width?: string | number // 列宽
+    rules?: PropFunction<FormRules>, // 字段校验（优先级最高）
     customSlot?: string // 字段自定义插槽（插槽脱离 el-form-item 组件）
     slot?: string // 字段插槽（插槽在 el-form-item 组件里面）
     props?: Record<string, any> // el-table-column 配置

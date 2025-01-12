@@ -1,8 +1,15 @@
 <script setup lang="ts">
-import {TABLE_CELL_COMPONENT, TABLE_CELL_CUSTOM_SLOT, TABLE_CELL_SLOT} from "@packages/constants"
+import {
+  FORM_EMIT_NAME,
+  TABLE_CELL_COMPONENT,
+  TABLE_CELL_CUSTOM_SLOT,
+  TABLE_CELL_SLOT,
+  TABLE_ROW_VALUE_KEY
+} from "@packages/constants"
 import type {TableConfig, ColumnItem, CellChangeParams} from "@packages/types"
 import {isFunction, isString, isUndefined, omit} from "lodash";
 import {reactive, ref} from "vue";
+import type {ValidateFieldsError} from "async-validator";
 
 defineOptions({name: 'SpriteTable'})
 
@@ -16,6 +23,8 @@ const props = withDefaults(defineProps<Props>(), {
   columns: () => [],
   data: () => []
 })
+
+const emit = defineEmits([FORM_EMIT_NAME]);
 
 /**
  * 整个渲染的表单实例对象
@@ -91,6 +100,7 @@ const handleChange = (params: { value: any, scope: any, item: ColumnItem, event:
   if (isFunction(item.change)) {
     item.change(payload)
   }
+  emit(FORM_EMIT_NAME, payload)
 }
 
 /**
@@ -156,16 +166,80 @@ const chkAndSetCellCustomSlot = (params: { value: any, scope: any, item: ColumnI
 const getComponentProps = (item: ColumnItem) => {
   return {
     // 忽略 disabled、readonly 属性，避免冲突
-    ...omit(item, 'disabled', 'readonly'),
+    ...omit(item, 'disabled', 'readonly', ),
     // 字段组件配置
     ...item.props,
   };
-};
+}
+
+/**
+ * 表单项校验规则
+ */
+const getRules = (item: ColumnItem) => {
+  if (Array.isArray(item?.rules)) {
+    return item?.rules
+  }
+  if (item.required) {
+    return [{
+      required: true,
+      message: `${item.label || item.name}必填`,
+      trigger: 'change',
+    }]
+  }
+  return item?.rules || []
+}
+
+const formRef = ref()
+const tableRef = ref()
+
+const validate = () => {
+  return new Promise((resolve, reject) => {
+    formRef.value?.validate((valid: boolean, invalidFields?: ValidateFieldsError) => {
+      if (valid) {
+        resolve(getFormData())
+      } else {
+        reject(invalidFields)
+      }
+    });
+  })
+}
+
+/**
+ * 重置表单
+ */
+const resetFields = () => {
+  formRef.value?.resetFields()
+}
+
+const getFormData = () => {
+  return form.data.map(item => {
+    const keys = Object.keys(item)
+    return {
+      // 忽略表格配置时，设置的临时字段
+      ...omit(item, keys.filter(key => key.includes(TABLE_ROW_VALUE_KEY))),
+    }
+  })
+}
+
+/**
+ * @validate 表单校验
+ * @resetFields 表单重置
+ * @formRef 表单实例对象
+ * @tableRef 表格实例对象
+ * @getFormData 获取表格数据
+ */
+defineExpose({
+  validate,
+  resetFields,
+  formRef,
+  tableRef,
+  getFormData
+})
 </script>
 
 <template>
-  <el-form :model="form" v-bind="config?.formProps">
-    <el-table :data="form.data" v-bind="config?.tableProps">
+  <el-form ref="formRef" :model="form" v-bind="config?.formProps">
+    <el-table ref="tableRef" :data="form.data" v-bind="config?.tableProps">
       <template v-for="item in columns" :key="item.name">
         <el-table-column
             :label="item.label"
@@ -179,7 +253,8 @@ const getComponentProps = (item: ColumnItem) => {
               </template>
               <el-form-item
                   v-else
-                  :prop="item.name"
+                  :prop="`data.${scope.$index}.${item.name}`"
+                  :rules="getRules(item)"
                   v-bind="item?.formItemProps"
               >
                 <template v-if="chkAndSetCellSlot({value: scope.row[item.name], scope, item})">
@@ -203,6 +278,16 @@ const getComponentProps = (item: ColumnItem) => {
           </template>
         </el-table-column>
       </template>
+      <template v-if="config?.defaultSlot" #default>
+        <slot :name="config.defaultSlot"></slot>
+      </template>
+      <template v-if="config?.appendSlot" #append>
+        <slot :name="config.appendSlot"></slot>
+      </template>
+      <template v-if="config?.emptySlot" #empty>
+        <slot :name="config.emptySlot"></slot>
+      </template>
     </el-table>
+    <slot></slot>
   </el-form>
 </template>
