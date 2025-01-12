@@ -166,7 +166,7 @@ const chkAndSetCellCustomSlot = (params: { value: any, scope: any, item: ColumnI
 const getComponentProps = (item: ColumnItem) => {
   return {
     // 忽略 disabled、readonly 属性，避免冲突
-    ...omit(item, 'disabled', 'readonly', ),
+    ...omit(item, 'disabled', 'readonly',),
     // 字段组件配置
     ...item.props,
   };
@@ -247,31 +247,29 @@ defineExpose({
             :width="item.width"
             v-bind="item.props">
           <template #default="scope">
-            <template v-if="chkAndSetCellComponent({value: scope.row[item.name], scope, item})">
-              <template v-if="chkAndSetCellCustomSlot({value: scope.row[item.name], scope, item})">
-                <slot :name="scope.row[TABLE_CELL_CUSTOM_SLOT]"></slot>
-              </template>
-              <el-form-item
+            <slot
+                v-if="chkAndSetCellCustomSlot({value: scope.row[item.name], scope, item})"
+                :name="scope.row[TABLE_CELL_CUSTOM_SLOT]"></slot>
+            <el-form-item
+                v-else-if="chkAndSetCellComponent({value: scope.row[item.name], scope, item})"
+                :prop="`data.${scope.$index}.${item.name}`"
+                :rules="getRules(item)"
+                v-bind="item?.formItemProps"
+            >
+              <slot
+                  v-if="chkAndSetCellSlot({value: scope.row[item.name], scope, item})"
+                  :name="scope.row[TABLE_CELL_SLOT]"></slot>
+              <component
                   v-else
-                  :prop="`data.${scope.$index}.${item.name}`"
-                  :rules="getRules(item)"
-                  v-bind="item?.formItemProps"
-              >
-                <template v-if="chkAndSetCellSlot({value: scope.row[item.name], scope, item})">
-                  <slot :name="scope.row[TABLE_CELL_SLOT]"></slot>
-                </template>
-                <component
-                    v-else
-                    ref="formItemListRef"
-                    :is="scope.row[`${TABLE_CELL_COMPONENT}${item.name}`]"
-                    v-model="scope.row[item.name]"
-                    @change="(event: Record<string, any>) => handleChange({value: scope.row[item.name], scope, item, event})"
-                    :formData="scope.row"
-                    :scope="scope"
-                    v-bind="getComponentProps(item)"
-                />
-              </el-form-item>
-            </template>
+                  ref="formItemListRef"
+                  :is="scope.row[`${TABLE_CELL_COMPONENT}${item.name}`]"
+                  v-model="scope.row[item.name]"
+                  @change="(event: Record<string, any>) => handleChange({value: scope.row[item.name], scope, item, event})"
+                  :formData="scope.row"
+                  :scope="scope"
+                  v-bind="getComponentProps(item)"
+              />
+            </el-form-item>
             <template v-else>
               {{ formatCellValue({value: scope.row[item.name], scope, item}) }}
             </template>

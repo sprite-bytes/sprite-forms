@@ -175,6 +175,10 @@ const submitForm = () => {
 const change = (data: any) => {
   console.log(data)
 }
+
+const restForm = () => {
+  spriteFormsRef.value.resetFields()
+}
 </script>
 
 <template>
@@ -187,6 +191,7 @@ const change = (data: any) => {
         @change="change"
     >
       <div class="action">
+        <el-button size="large" type="primary" @click="restForm">重 置</el-button>
         <el-button size="large" type="primary" @click="submitForm">提 交</el-button>
       </div>
     </SpriteForms>
