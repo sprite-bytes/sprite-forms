@@ -1,5 +1,5 @@
 import type {FormRules} from 'element-plus'
-import {DisplayMode, FormElemType} from "@packages/enums";
+import {DisplayMode, FormElemType} from "@packages/enums"
 
 export type PropFunction<T> = T | ((params?: Record<string, any>) => T | any)
 
@@ -37,8 +37,8 @@ export interface FormItemConfig {
     component?: PropFunction<FormElemType | string> // 字段组件
     mode?: PropFunction<DisplayMode> // 组件展示模式
     visible?: PropFunction<boolean> // 组件隐藏
-    rules?: PropFunction<FormRules>, // 字段校验（优先级最高）
-    required?: PropFunction<boolean>, // 字段必填（简要必填配置方式）
+    rules?: PropFunction<FormRules> // 字段校验（优先级最高）
+    required?: PropFunction<boolean> // 字段必填（简要必填配置方式）
     options?: PropFunction<Record<string, any>[]> // 所有选项类型组件的选项数据
     remoteOptions?: PropFunction<Promise<Record<string, any>[]>> // 所有选项类型组件的远程选项数据
     valueKey?: string // 选项值字段
@@ -53,7 +53,6 @@ export interface FormItemConfig {
     props?: Record<string, any> // 字段组件配置
     itemProps?: ItemProps // 字段组件配置子组件配置（比如下拉选择的 el-option、el-radio、el-checkbox 属性、插槽以及其他组件（el-input）的插槽）
     change?: (data: FormItemChangeParams) => void // 字段值改变时触发
-    formChange?: (data: any) => void // 表单数据改变时触发
     format?: (data: any) => any // 仅在 VIEW 模式下格式化展示的文本
     emptyText?: string // VIEW 模式下为 undefined、null 时展示的默认文本
 }
@@ -94,7 +93,7 @@ export interface ColumnItem {
     name: string // 列字段名
     label?: string // 列字段描述
     width?: string | number // 列宽
-    rules?: PropFunction<FormRules>, // 字段校验（优先级最高）
+    rules?: PropFunction<FormRules> // 字段校验（优先级最高）
     customSlot?: string // 字段自定义插槽（插槽脱离 el-form-item 组件）
     slot?: string // 字段插槽（插槽在 el-form-item 组件里面）
     props?: Record<string, any> // el-table-column 配置
@@ -106,6 +105,6 @@ export interface ColumnItem {
     remoteOptions?: PropFunction<Promise<Record<string, any>[]>> // 所有选项类型组件的远程选项数据
     valueKey?: string // 选项值字段
     labelKey?: string  // 选项描述字段
-    required?: PropFunction<boolean>, // 字段必填（简要必填配置方式）
+    required?: PropFunction<boolean> // 字段必填（简要必填配置方式）
     emptyText?: string // 为 undefined、null 时展示的默认文本
 }
