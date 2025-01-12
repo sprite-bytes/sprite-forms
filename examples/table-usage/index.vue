@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import {reactive} from "vue";
+import {reactive, ref} from "vue";
 import SpriteTable from "@packages/components/sprite-table/sprite-table.vue";
 import type {ColumnItem, TableConfig} from "@packages/types";
 import {FormElemType} from "@packages/enums";
+import {ElMessage} from "element-plus";
 
 const getOptions = (params: any) => {
   const list = [{value: 1, name: `党员${params.label}`,}, {value: 2, name: `团员${params.label}`}]
@@ -22,6 +23,7 @@ const columns = reactive<ColumnItem[]>([
   {
     name: 'age',
     label: '年龄',
+    required: true,
     component: FormElemType.INPUT_NUMBER
   },
   {
@@ -72,14 +74,33 @@ const data = reactive([
 const config = reactive<TableConfig>({
   tableProps: {
     border: true,
-  }
+  },
+  appendSlot: 'append'
 })
+
+const spriteTableRef = ref()
+const submitForm = () => {
+  spriteTableRef.value.validate().then((params: any) => {
+    console.log('params', params)
+    ElMessage.success('操作成功')
+  }).catch((error: any) => {
+    console.log('error=>', error)
+    ElMessage.warning('请填写必填信息')
+  })
+}
+
+const restForm = () => {
+  spriteTableRef.value.resetFields()
+}
+
+const change = (data: any) => {
+  console.log('SpriteTableChange=>', data)
+}
 </script>
 
 <template>
-  <SpriteTable :config="config" :columns="columns" :data="data"/>
+  <SpriteTable ref="spriteTableRef" @change="change" :config="config" :columns="columns" :data="data">
+    <el-button size="large" type="primary" @click="submitForm">提 交</el-button>
+    <el-button size="large" type="primary" @click="restForm">重置表单</el-button>
+  </SpriteTable>
 </template>
-
-<style scoped>
-
-</style>
