@@ -1,0 +1,11 @@
+.sprite-table-column-required {
+    position: relative;
+}
+
+.sprite-table-column-required .cell:before {
+    position: absolute;
+    left: 2px;
+    display: block;
+    content: "*";
+    color: #ff0000;
+}

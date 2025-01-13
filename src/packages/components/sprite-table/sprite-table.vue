@@ -6,7 +6,7 @@ import {
   TABLE_CELL_SLOT,
   TABLE_ROW_VALUE_KEY
 } from "@packages/constants"
-import type {TableConfig, ColumnItem, CellChangeParams} from "@packages/types"
+import type {CellChangeParams, ColumnItem, TableConfig} from "@packages/types"
 import {isFunction, isString, isUndefined, omit} from "lodash";
 import {reactive, ref} from "vue";
 import type {ValidateFieldsError} from "async-validator";
@@ -171,22 +171,24 @@ const getComponentProps = (item: ColumnItem) => {
     ...item.props,
   };
 }
+const columnStore = reactive<Record<string, any>>({})
 
 /**
- * 表单项校验规则
+ * 表单项校验规则TABLE_COLUMN_RULES
  */
-const getRules = (item: ColumnItem) => {
+const chkAndSetRules = (item: ColumnItem) => {
+  let rules: any[] = []
   if (Array.isArray(item?.rules)) {
-    return item?.rules
-  }
-  if (item.required) {
-    return [{
+    rules = item?.rules
+  } else if (item.required) {
+    rules = [{
       required: true,
       message: `${item.label || item.name}必填`,
       trigger: 'change',
     }]
   }
-  return item?.rules || []
+  columnStore[item.name] = rules.some(item => item.required)
+  return rules.length > 0 ? rules : []
 }
 
 const formRef = ref()
@@ -222,6 +224,15 @@ const getFormData = () => {
 }
 
 /**
+ * 自定义列表描述样式类
+ */
+const labelClassName = (item: ColumnItem) => {
+  if (columnStore[item.name]) {
+    return 'sprite-table-column-required'
+  }
+}
+
+/**
  * @validate 表单校验
  * @resetFields 表单重置
  * @formRef 表单实例对象
@@ -245,15 +256,17 @@ defineExpose({
             :label="item.label"
             :prop="item.name"
             :width="item.width"
+            :label-class-name="labelClassName(item)"
             v-bind="item.props">
           <template #default="scope">
             <slot
                 v-if="chkAndSetCellCustomSlot({value: scope.row[item.name], scope, item})"
-                :name="scope.row[TABLE_CELL_CUSTOM_SLOT]"></slot>
+                :name="scope.row[TABLE_CELL_CUSTOM_SLOT]">
+            </slot>
             <el-form-item
                 v-else-if="chkAndSetCellComponent({value: scope.row[item.name], scope, item})"
                 :prop="`data.${scope.$index}.${item.name}`"
-                :rules="getRules(item)"
+                :rules="chkAndSetRules(item)"
                 v-bind="item?.formItemProps"
             >
               <slot

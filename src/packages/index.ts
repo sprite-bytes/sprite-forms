@@ -1,4 +1,5 @@
-import type {App} from 'vue'
+import type {App} from 'vue';
+import "@packages/style/sprite-table.css";
 
 import SpriteForms from "./components/sprite-forms";
 import SpriteTable from "./components/sprite-table";
