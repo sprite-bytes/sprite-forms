@@ -57,6 +57,7 @@ defineExpose({
         :key="item[valueKey]"
         :label="item[labelKey]"
         :value="item[valueKey]"
+        v-bind="props?.itemProps?.optionProps"
     >
     </el-radio>
   </el-radio-group>

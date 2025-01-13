@@ -77,6 +77,7 @@ defineExpose({
         :key="item[valueKey]"
         :label="item[labelKey]"
         :value="item[valueKey]"
+        v-bind="props?.itemProps?.optionProps"
     >
     </el-option>
   </el-select>

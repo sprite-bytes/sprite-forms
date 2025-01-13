@@ -58,6 +58,7 @@ defineExpose({
         :key="item[valueKey]"
         :label="item[labelKey]"
         :value="item[valueKey]"
+        v-bind="props?.itemProps?.optionProps"
     >
     </el-checkbox>
   </el-checkbox-group>

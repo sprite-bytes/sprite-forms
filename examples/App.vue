@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {ref} from 'vue'
-import FormUsage from './form-usage/index.vue'
-import TableUsage from './table-usage/index.vue'
+import FormUsage from './component/form-usage/index.vue'
+import TableUsage from './component/table-usage/index.vue'
 
 const activeName = ref('FormUsage')
 </script>
