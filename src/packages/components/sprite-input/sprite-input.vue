@@ -3,6 +3,7 @@
 import {ref} from "vue";
 import {useFormItem} from "@packages/hooks/use-form-item.ts";
 import type {FormItemProps} from "@packages/types"
+import {FORM_ITEM_EMIT_NAME} from "@packages/constants";
 
 defineOptions({name: 'SpriteInput'})
 
@@ -19,6 +20,11 @@ const {
   viewValue,
 } = useFormItem(props, internalModel)
 
+const emit = defineEmits([FORM_ITEM_EMIT_NAME]);
+const handleChange = () => {
+  emit(FORM_ITEM_EMIT_NAME, {...props, internalModel})
+}
+
 defineExpose({
   bindFieldName: props.name,
   scope: props.scope
@@ -30,7 +36,7 @@ defineExpose({
     <slot v-if="viewSlot" :name="viewSlot"></slot>
     <template v-else>{{ viewValue }}</template>
   </template>
-  <el-input v-else v-model="internalModel">
+  <el-input v-else @change="handleChange" v-model="internalModel">
     <template #append v-if="props?.itemProps?.appendSlot">
       <slot :name="props.itemProps.appendSlot"></slot>
     </template>

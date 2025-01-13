@@ -30,6 +30,7 @@ const handleChange = () => {
 
 defineExpose({
   bindFieldName: props.name,
+  scope: props.scope
 })
 </script>
 

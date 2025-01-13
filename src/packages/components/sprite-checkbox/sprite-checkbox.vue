@@ -39,6 +39,7 @@ onMounted(() => {
 defineExpose({
   loadOptions,
   bindFieldName: props.name,
+  scope: props.scope
 })
 </script>
 

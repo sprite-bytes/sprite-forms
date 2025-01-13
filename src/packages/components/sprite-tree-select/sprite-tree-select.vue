@@ -3,6 +3,7 @@
 import {onMounted, ref} from "vue";
 import {useFormItem} from "@packages/hooks/use-form-item.ts";
 import type {FormItemProps} from "@packages/types"
+import {FORM_ITEM_EMIT_NAME} from "@packages/constants";
 
 defineOptions({name: 'SpriteTreeSelect'})
 
@@ -21,8 +22,19 @@ const {
   loadOptions
 } = useFormItem(props, internalModel)
 
+const emit = defineEmits([FORM_ITEM_EMIT_NAME]);
+const handleChange = () => {
+  emit(FORM_ITEM_EMIT_NAME, {...props, internalModel})
+}
+
 onMounted(() => {
   loadOptions()
+})
+
+defineExpose({
+  loadOptions,
+  bindFieldName: props.name,
+  scope: props.scope
 })
 </script>
 
@@ -31,5 +43,5 @@ onMounted(() => {
     <slot v-if="viewSlot" :name="viewSlot"></slot>
     <template v-else>{{ viewValue }}</template>
   </template>
-  <el-tree-select v-else v-model="internalModel" :data="options"/>
+  <el-tree-select v-else @change="handleChange" v-model="internalModel" :data="options"/>
 </template>
