@@ -4,15 +4,7 @@ import SpriteTable from "@packages/components/sprite-table/sprite-table.vue";
 import type {ColumnItem, TableConfig} from "@packages/types";
 import {FormElemType} from "@packages/enums";
 import {ElMessage} from "element-plus";
-
-const getOptions = (params: any) => {
-  const list = [{value: 1, name: `党员${params.label}`,}, {value: 2, name: `团员${params.label}`}]
-  return new Promise(resolve => {
-    setTimeout(() => {
-      resolve(list)
-    }, 2000)
-  })
-}
+import {getPoliticalOutlooks} from "../../mock";
 
 const columns = reactive<ColumnItem[]>([
   {
@@ -60,7 +52,7 @@ const columns = reactive<ColumnItem[]>([
     valueKey: 'value',
     required: true,
     remoteOptions: ({params}: any) => {
-      return getOptions({label: params?.label || '#'})
+      return getPoliticalOutlooks({label: params?.label || '#'})
     }
   },
 ])
